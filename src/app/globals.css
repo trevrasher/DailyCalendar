@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-montserrat: var(--font-montserrat);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +24,37 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.header-title {
+  color: rgb(39, 154, 207);
+  font-size: 5rem;
+  font-family: var(--font-geist-sans);
+}
+
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 80vh;
+  width:100vh;
+  margin: 0 auto;
+}
+
+.calendar-box {
+  background: var(--background);
+  border: 1px solid var(--foreground);
+  border-radius: 8px;
+  aspect-ratio:1/1;
+  min-width: 0px;  /* Prevents overflow */
+  min-height: 0px; /* Prevents overflow */
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
