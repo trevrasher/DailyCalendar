@@ -131,3 +131,37 @@ body {
   box-shadow: 0 0 10px rgba(39, 154, 207, 0.3);
 }
 
+.calendar-box {
+  min-height: 100px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendar-date {
+  font-weight: bold;
+}
+
+.todo-preview {
+  font-size: 0.8rem;
+  overflow: hidden;
+}
+
+.todo-preview-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #666;
+}
+
+.todo-preview-item.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.todo-preview-more {
+  font-size: 0.7rem;
+  color: #999;
+  font-style: italic;
+}

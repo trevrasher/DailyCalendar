@@ -23,6 +23,7 @@ interface ModalProps {
   ];
 
 
+
 const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
   const [newTodo, setNewTodo] = useState('');
   const { todos, addTodo, deleteTodo } = useTodos(day, month, year);
@@ -105,10 +106,40 @@ export default function Page() {
     );
   };
   
-
   const handleDayClick = (day: number) => {
     setSelectedDay(day);
   };
+
+  const CalendarBox = ({ day, month, year, onClick }: {
+  day: number;
+  month: number;
+  year: number;
+  onClick: () => void;
+}) => {
+  const { todos } = useTodos(day, month, year);
+
+  return (
+    <div 
+      className={`calendar-box ${isCurrentDay(day) ? 'current-day' : ''}`}
+      onClick={onClick}
+    >
+      <div className="calendar-date">{day}</div>
+      <div className="todo-preview">
+        {todos.slice(0, 2).map((todo) => (
+          <div 
+            key={todo.id} 
+            className={`todo-preview-item ${todo.completed ? 'completed' : ''}`}
+          >
+            • {todo.text}
+          </div>
+        ))}
+        {todos.length > 2 && (
+          <div className="todo-preview-more">+{todos.length - 2} more</div>
+        )}
+      </div>
+    </div>
+  );
+};
 
   return (
     <>
@@ -121,16 +152,16 @@ export default function Page() {
           <button onClick={handleNextMonth}>&gt;</button>
         </div>
       <main className="grid-container">
-        {[...Array(getDaysInMonth(currentMonth, currentYear))].map((_, index) => (
-          <div 
-            key={index}
-            className={`calendar-box ${isCurrentDay(index + 1) ? 'current-day' : ''}`}
-            onClick={() => handleDayClick(index + 1)}
-          >
-            {index + 1}
-          </div>
-        ))}
-      </main>
+  {[...Array(getDaysInMonth(currentMonth, currentYear))].map((_, index) => (
+    <CalendarBox
+      key={index}
+      day={index + 1}
+      month={currentMonth}
+      year={currentYear}
+      onClick={() => handleDayClick(index + 1)}
+    />
+  ))}
+    </main>
      <Modal 
       isOpen={selectedDay !== null}
       onClose={() => setSelectedDay(null)}
