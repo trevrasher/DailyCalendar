@@ -30,9 +30,6 @@ export default function TodoList() {
   };
 
 
-
-
- 
  return (
     <div className="todo-container">
       <h1 className="card">Todo List</h1>
