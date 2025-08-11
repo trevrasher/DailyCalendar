@@ -47,10 +47,34 @@ const addTodo = async (text: string) => {
       console.error('Failed to delete todo:', error);
     }
   };
+const toggleTodo = async (id: number) => {
+try {
+    const todoToUpdate = todos.find(todo => todo.id === id);
+    if (!todoToUpdate) return;
+
+    const response = await fetch('/api/todos', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id,
+        completed: !todoToUpdate.completed
+      }),
+    });
+
+     if (response.ok) {
+      setTodos(todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      ));
+    }
+  } catch (error) {
+    console.error('Failed to toggle todo:', error);
+  }
+};
 
   return {
     todos,
     addTodo,
     deleteTodo,  
+    toggleTodo,
   };
 }

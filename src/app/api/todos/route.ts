@@ -53,3 +53,18 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const json = await request.json();
+    const {id, completed} = json;
+
+    const updatedTodo = await prisma.todo.update({
+      where: { id: Number(id) },
+      data: { completed }
+    });
+    return NextResponse.json(updatedTodo);
+  } catch (error) {
+    console.error("Failed to update todo", error);
+  }
+}

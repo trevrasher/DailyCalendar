@@ -2,12 +2,6 @@
 import { useTodos } from './usetodos';
 import { useState } from 'react';
 
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
-
 // popup box
 interface ModalProps {
   isOpen: boolean;
@@ -21,12 +15,17 @@ interface ModalProps {
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const getFirstDayOfMonth = (month: number, year: number) => {
+  return new Date(year, month, 1).getDay();
+};
 
 
 
 const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
   const [newTodo, setNewTodo] = useState('');
-  const { todos, addTodo, deleteTodo } = useTodos(day, month, year);
+  const { todos, addTodo, deleteTodo, toggleTodo} = useTodos(day, month, year);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +57,8 @@ const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
               <input
                 type="checkbox"
                 checked={todo.completed}
-                onChange={() => {}}
+                onChange={() => toggleTodo(todo.id)}
+                className="todo-checkbox"
               />
               <span>{todo.text}</span>
               <button onClick={() => deleteTodo(todo.id)}>Delete</button>
@@ -152,6 +152,18 @@ export default function Page() {
           <button onClick={handleNextMonth}>&gt;</button>
         </div>
       <main className="grid-container">
+  {/* Add day name headers */}
+  {dayNames.map(name => (
+    <div key={name} className="day-header">
+      {name}
+    </div>
+  ))}
+
+    {/* Add empty cells for padding */}
+  {[...Array(getFirstDayOfMonth(currentMonth, currentYear))].map((_, index) => (
+    <div key={`empty-${index}`} className="calendar-box empty" />
+  ))}
+  
   {[...Array(getDaysInMonth(currentMonth, currentYear))].map((_, index) => (
     <CalendarBox
       key={index}
