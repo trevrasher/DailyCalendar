@@ -36,7 +36,7 @@ const addTodo = async (text: string) => {
 
   const deleteTodo = async (id: number) => {
     try {
-      const response = await fetch(`/api/todos/${id}`, {
+      const response = await fetch(`/api/todos?id=${id}`, {
         method: 'DELETE',
       });
       

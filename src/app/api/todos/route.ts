@@ -40,16 +40,11 @@ export async function POST(request: Request) {
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const id = Number(searchParams.get('id'))
   try {
-    await prisma.todo.delete({
-      where: {
-        id: Number(params.id),
-      },
-    });
+    await prisma.todo.delete({where: {id}});
     return NextResponse.json({ message: 'Todo deleted' });
   } catch (error) {
     return NextResponse.json(
