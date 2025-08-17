@@ -1,7 +1,7 @@
 "use client";
 import { useTemplates } from './usetemplates';
 import { useTodos } from './usetodos';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // popup box
 interface ModalProps {
@@ -72,6 +72,83 @@ const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
   );
 };
 
+const DailyModal = ({isOpen, onClose, day, month, year }: ModalProps) => {
+  const [dailies, setDailies] = useState<any[]>([]);
+  
+  useEffect(() => {
+    const fetchDailies = async () => {
+      try {
+        const response = await fetch(
+          `/api/dailies?day=${day}&month=${month}&year=${year}`
+        );
+        const data = await response.json();
+        setDailies(data);
+      } catch (error) {
+        console.error('Failed to fetch dailies:', error);
+      }
+    };
+    if (isOpen) {
+      fetchDailies();
+    }
+  }, [day, month, year, isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">  
+      <div className="modal-content" onClick={e => e.stopPropagation()}>  
+        <h2>Daily Tasks for {monthNames[month]} {day}, {year}</h2>
+        <div className="dailies-list">
+          {dailies.map((daily) => (
+            <div key={daily.id} className="daily-item">
+              <span>{daily.text}</span>
+            </div>
+          ))}
+        </div>
+        <button 
+          onClick={onClose} 
+          className="modal-close"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Fix the dailyBox component syntax
+const DailyBox = ({ day, month, year }: { 
+  day: number;
+  month: number;
+  year: number;
+}) => {
+  const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
+
+  const handleClose = () => {
+    console.log("asd");
+    setIsDailyModalOpen(false);
+  };
+  
+  return (
+    <div className="dailyBox-container" onClick={(e) => {
+      e.stopPropagation();
+      setIsDailyModalOpen(true);
+    }}>
+      <div className="dailyBox-text">
+        Daily Tasks
+      </div>
+      <DailyModal 
+        isOpen={isDailyModalOpen}
+        onClose={handleClose}
+        day={day}
+        month={month}
+        year={year}
+      />
+    </div>
+  );
+};
+
+
 const TemplateList = () => {
   const { templates, addTemplate, deleteTemplate } = useTemplates('');
   const [newTemplate, setNewTemplate] = useState('');
@@ -101,6 +178,10 @@ const TemplateList = () => {
         {templates.map((template) => (
           <div key={template.id} className="template-item">
             <span>{template.text}</span>
+            <input
+                type="checkbox"
+                className="todo-checkbox"
+              />
             <button className="delete-button" onClick={() => deleteTemplate(template.id)}>X</button>
           </div>
         ))}
@@ -111,15 +192,28 @@ const TemplateList = () => {
 
 
 
-
 export default function Page() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
+useEffect(() => {
+    const createDailies = async () => {
+      try {
+        const response = await fetch('/api/dailies');
+        const data = await response.json();
+        console.log('Dailies created:', data);
+      } catch (error) {
+        console.error('Failed to create dailies:', error);
+      }
+    };
+    createDailies();
+  }); 
+
+
   const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month + 1, 0).getDate();
-  };
+};
 
   const handlePrevMonth = () => {
     if (currentMonth === 0) {
@@ -178,6 +272,7 @@ export default function Page() {
           <div className="todo-preview-more">+{todos.length - 2} more</div>
         )}
       </div>
+      <DailyBox day={day} month={month} year={year} />
     </div>
   );
 };
@@ -228,4 +323,5 @@ export default function Page() {
     </>
   );
 }
+
 
