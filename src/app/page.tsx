@@ -1,4 +1,5 @@
 "use client";
+import { useTemplates } from './usetemplates';
 import { useTodos } from './usetodos';
 import { useState } from 'react';
 
@@ -70,6 +71,46 @@ const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
     </div>
   );
 };
+
+const TemplateList = () => {
+  const { templates, addTemplate, deleteTemplate } = useTemplates('');
+  const [newTemplate, setNewTemplate] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newTemplate.trim()) {
+      addTemplate(newTemplate);
+      setNewTemplate('');
+    }
+  }
+
+  return (
+    <div className="template-container">
+      <h2 className="dailies-header">dailies</h2>
+      <form onSubmit={handleSubmit} className="template-form">
+        <input
+          type="text"
+          value={newTemplate}
+          onChange={(e) => setNewTemplate(e.target.value)}
+          placeholder="Add new template..."
+          className="template-input"
+        />
+        <button type="submit">Add</button>
+      </form>
+      <div className="template-list">
+        {templates.map((template) => (
+          <div key={template.id} className="template-item">
+            <span>{template.text}</span>
+            <button className="delete-button" onClick={() => deleteTemplate(template.id)}>X</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+
 
 export default function Page() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
@@ -146,6 +187,9 @@ export default function Page() {
       <header className="header-container">
         <h1 className="header-title">calendar</h1>
       </header>
+      <div className="templates">
+      <TemplateList />
+      </div>
       <div className="calendar-nav">
           <button onClick={handlePrevMonth}>&lt;</button>
           <h2>{monthNames[currentMonth]} {currentYear}</h2>

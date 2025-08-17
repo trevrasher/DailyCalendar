@@ -17,7 +17,16 @@ model Todo {
   createdAt DateTime @default(now())
 }
 
+model Template {
+  id Int @id @default(autoincrement())
+  text String
+}
+
 model Daily {
   id Int @id @default(autoincrement())
   text String
+  day Int
+  month Int  
+  year Int  
+  completed Boolean @default(false)
 }

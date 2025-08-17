@@ -187,3 +187,40 @@ body {
   min-height: 100px;
   padding: 8px;
 }
+
+.templates {
+  position:fixed;
+  left: 0%;
+  top: 35%;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.dailies-header {
+  text-align: center;
+  color: rgb(39, 154, 207);  /* Matches your existing blue color */
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: var(--font-geist-sans);
+}
+
+.delete-button {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: rgb(39, 154, 207);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 1rem;
+  gap: 0.5rem;
+}
