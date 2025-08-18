@@ -12,6 +12,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --green: #179231;
   }
 }
 
@@ -44,6 +45,7 @@ body {
 }
 
 .calendar-box {
+  position:relative;
   background: var(--background);
   border: 1px solid var(--foreground);
   border-radius: 8px;
@@ -207,7 +209,6 @@ body {
 .delete-button {
   margin-left: auto;
   background: none;
-  border: none;
   color: rgb(39, 154, 207);
   font-size: 1.2rem;
   cursor: pointer;
@@ -223,4 +224,17 @@ body {
   margin: 0 auto;
   padding: 1rem;
   gap: 0.5rem;
+}
+
+.dailyBox-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12%;
+  margin: 0 auto;
+  background: var(--green);
+  border: 1px solid var(--foreground);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

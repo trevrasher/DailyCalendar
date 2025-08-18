@@ -116,13 +116,32 @@ const DailyModal = ({isOpen, onClose, day, month, year }: ModalProps) => {
   );
 };
 
-// Fix the dailyBox component syntax
 const DailyBox = ({ day, month, year }: { 
   day: number;
   month: number;
   year: number;
 }) => {
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
+  const [todayDailies, setTodayDailies] = useState<any[]>([]);
+  const fetchTodayDailies = async () => {
+    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
+    const data = await res.json();
+    setTodayDailies(data);
+  };
+  useEffect(() => {
+  fetchTodayDailies();
+  }, [day, month, year]);
+  
+  
+  const completeDailiesCount = () => {
+    const comp = (todayDailies.filter((daily:any) => daily.completed)).length;
+    const total = todayDailies.length;
+    if (total != 0) {
+        return comp + " / " + total;
+      }
+      return "";
+    
+  }
 
   const handleClose = () => {
     console.log("asd");
@@ -130,13 +149,14 @@ const DailyBox = ({ day, month, year }: {
   };
   
   return (
+    
     <div className="dailyBox-container" onClick={(e) => {
       e.stopPropagation();
       setIsDailyModalOpen(true);
     }}>
-      <div className="dailyBox-text">
-        Daily Tasks
-      </div>
+        <div className="dailyBox-text">
+          {completeDailiesCount()}
+        </div>
       <DailyModal 
         isOpen={isDailyModalOpen}
         onClose={handleClose}
@@ -281,6 +301,16 @@ useEffect(() => {
   onClick: () => void;
 }) => {
   const { todos } = useTodos(day, month, year);
+  const [dailies, setDailies] = useState<any[]>([]);
+  const fetchDailies = async () => {
+    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
+    const data = await res.json();
+    setDailies(data);
+      }
+  useEffect(() => {
+    fetchDailies();
+  }, [day, month, year]);
+
 
   return (
     <div 
@@ -301,7 +331,9 @@ useEffect(() => {
           <div className="todo-preview-more">+{todos.length - 2} more</div>
         )}
       </div>
-      <DailyBox day={day} month={month} year={year} />
+      {dailies.length > 0 && (
+        <DailyBox day={day} month={month} year={year} />
+      )}
     </div>
   );
 };
