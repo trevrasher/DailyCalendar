@@ -54,7 +54,7 @@ const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
         </form>
         <div className="todo-list">
           {todos.map((todo) => (
-            <div key={todo.id} className="todo-item">
+            <div key={todo.id} className="todo-item"> 
               <input
                 type="checkbox"
                 checked={todo.completed}
@@ -152,6 +152,35 @@ const DailyBox = ({ day, month, year }: {
 const TemplateList = () => {
   const { templates, addTemplate, deleteTemplate } = useTemplates('');
   const [newTemplate, setNewTemplate] = useState('');
+  const [todayDailies, setTodayDailies] = useState<any[]>([]);
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth();
+  const year = today.getFullYear();
+
+  // Fetch today's dailies
+  const fetchTodayDailies = async () => {
+    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
+    const data = await res.json();
+    setTodayDailies(data);
+  };
+
+  useEffect(() => {
+    fetchTodayDailies();
+  }, []);
+
+  // Toggle and refresh
+  const toggleTodayDailyByText = async (text: string) => {
+    const daily = todayDailies.find((d: any) => d.text === text);
+    if (!daily) return;
+    await fetch('/api/dailies', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: daily.id, completed: !daily.completed }),
+    });
+    // Refetch to update UI
+    fetchTodayDailies();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,9 +208,11 @@ const TemplateList = () => {
           <div key={template.id} className="template-item">
             <span>{template.text}</span>
             <input
-                type="checkbox"
-                className="todo-checkbox"
-              />
+              type="checkbox"
+              checked={!!todayDailies.find(d => d.text === template.text && d.completed)}
+              onChange={() => toggleTodayDailyByText(template.text)}
+              className="todo-checkbox"
+            />
             <button className="delete-button" onClick={() => deleteTemplate(template.id)}>X</button>
           </div>
         ))}
@@ -189,8 +220,6 @@ const TemplateList = () => {
     </div>
   );
 };
-
-
 
 export default function Page() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
