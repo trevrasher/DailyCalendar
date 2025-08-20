@@ -13,6 +13,7 @@
     --background: #0a0a0a;
     --foreground: #ededed;
     --green: #179231;
+    --red: #921717;
   }
 }
 
@@ -232,9 +233,18 @@ body {
   right: 0;
   bottom: 12%;
   margin: 0 auto;
-  background: var(--green);
   border: 1px solid var(--foreground);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.dailyBox-Red {
+  background: var(--red);
+
+}
+
+.dailyBox-Green {
+  background: var(--green);
+
 }

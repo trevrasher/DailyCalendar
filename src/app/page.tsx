@@ -1,22 +1,16 @@
 "use client";
-import { useTemplates } from './usetemplates';
-import { useTodos } from './usetodos';
 import { useState, useEffect } from 'react';
+import { DailyBox } from './components/DailyBox'
+import { DailyModal} from './components/DailyModal'
+import { TemplateList } from './components/TemplateList'
+import { TodoModal } from './components/TodoModal'
+import { CalendarBox } from './components/CalendarBox';
 
-// popup box
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  day: number;
-  month: number;
-  year: number;
-}
-
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const getFirstDayOfMonth = (month: number, year: number) => {
   return new Date(year, month, 1).getDay();
@@ -24,243 +18,13 @@ interface ModalProps {
 
 
 
-const Modal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
-  const [newTodo, setNewTodo] = useState('');
-  const { todos, addTodo, deleteTodo, toggleTodo} = useTodos(day, month, year);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTodo.trim()) {
-      addTodo(newTodo);
-      setNewTodo('');
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>{monthNames[month]} {day}, {year}</h2>
-        <form onSubmit={handleSubmit} className="todo-form">
-          <input
-            type="text"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            placeholder="Add new todo..."
-            className="todo-input"
-          />
-          <button type="submit" className="todo-button">Add</button>
-        </form>
-        <div className="todo-list">
-          {todos.map((todo) => (
-            <div key={todo.id} className="todo-item"> 
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={() => toggleTodo(todo.id)}
-                className="todo-checkbox"
-              />
-              <span>{todo.text}</span>
-              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-            </div>
-          ))}
-        </div>
-        <button onClick={onClose} className="modal-close">Close</button>
-      </div>
-    </div>
-  );
-};
-
-const DailyModal = ({isOpen, onClose, day, month, year }: ModalProps) => {
-  const [dailies, setDailies] = useState<any[]>([]);
-  
-  useEffect(() => {
-    const fetchDailies = async () => {
-      try {
-        const response = await fetch(
-          `/api/dailies?day=${day}&month=${month}&year=${year}`
-        );
-        const data = await response.json();
-        setDailies(data);
-      } catch (error) {
-        console.error('Failed to fetch dailies:', error);
-      }
-    };
-    if (isOpen) {
-      fetchDailies();
-    }
-  }, [day, month, year, isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal-overlay">  
-      <div className="modal-content" onClick={e => e.stopPropagation()}>  
-        <h2>Daily Tasks for {monthNames[month]} {day}, {year}</h2>
-        <div className="dailies-list">
-          {dailies.map((daily) => (
-            <div key={daily.id} className="daily-item">
-              <span>{daily.text}</span>
-            </div>
-          ))}
-        </div>
-        <button 
-          onClick={onClose} 
-          className="modal-close"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const DailyBox = ({ day, month, year }: { 
-  day: number;
-  month: number;
-  year: number;
-}) => {
-  const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
-  const [todayDailies, setTodayDailies] = useState<any[]>([]);
-  const fetchTodayDailies = async () => {
-    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
-    const data = await res.json();
-    setTodayDailies(data);
-  };
-  useEffect(() => {
-  fetchTodayDailies();
-  }, [day, month, year]);
-  
-  
-  const completeDailiesCount = () => {
-    const comp = (todayDailies.filter((daily:any) => daily.completed)).length;
-    const total = todayDailies.length;
-    if (total != 0) {
-        return comp + " / " + total;
-      }
-      return "";
-    
-  }
-
-  const handleClose = () => {
-    console.log("asd");
-    setIsDailyModalOpen(false);
-  };
-  
-  return (
-    
-    <div className="dailyBox-container" onClick={(e) => {
-      e.stopPropagation();
-      setIsDailyModalOpen(true);
-    }}>
-        <div className="dailyBox-text">
-          {completeDailiesCount()}
-        </div>
-      <DailyModal 
-        isOpen={isDailyModalOpen}
-        onClose={handleClose}
-        day={day}
-        month={month}
-        year={year}
-      />
-    </div>
-  );
-};
-
-
-const TemplateList = () => {
-  const { templates, addTemplate, deleteTemplate } = useTemplates('');
-  const [newTemplate, setNewTemplate] = useState('');
-  const [todayDailies, setTodayDailies] = useState<any[]>([]);
-  const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth();
-  const year = today.getFullYear();
-
-  // Fetch today's dailies
-  const fetchTodayDailies = async () => {
-    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
-    const data = await res.json();
-    setTodayDailies(data);
-  };
-
-  useEffect(() => {
-    fetchTodayDailies();
-  }, []);
-
-  // Toggle and refresh
-  const toggleTodayDailyByText = async (text: string) => {
-    const daily = todayDailies.find((d: any) => d.text === text);
-    if (!daily) return;
-    await fetch('/api/dailies', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: daily.id, completed: !daily.completed }),
-    });
-    // Refetch to update UI
-    fetchTodayDailies();
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTemplate.trim()) {
-      addTemplate(newTemplate);
-      setNewTemplate('');
-    }
-  }
-
-  return (
-    <div className="template-container">
-      <h2 className="dailies-header">dailies</h2>
-      <form onSubmit={handleSubmit} className="template-form">
-        <input
-          type="text"
-          value={newTemplate}
-          onChange={(e) => setNewTemplate(e.target.value)}
-          placeholder="Add new template..."
-          className="template-input"
-        />
-        <button type="submit">Add</button>
-      </form>
-      <div className="template-list">
-        {templates.map((template) => (
-          <div key={template.id} className="template-item">
-            <span>{template.text}</span>
-            <input
-              type="checkbox"
-              checked={!!todayDailies.find(d => d.text === template.text && d.completed)}
-              onChange={() => toggleTodayDailyByText(template.text)}
-              className="todo-checkbox"
-            />
-            <button className="delete-button" onClick={() => deleteTemplate(template.id)}>X</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 export default function Page() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
-useEffect(() => {
-    const createDailies = async () => {
-      try {
-        const response = await fetch('/api/dailies');
-        const data = await response.json();
-        console.log('Dailies created:', data);
-      } catch (error) {
-        console.error('Failed to create dailies:', error);
-      }
-    };
-    createDailies();
-  }); 
-
-
-  const getDaysInMonth = (month: number, year: number) => {
+    const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month + 1, 0).getDate();
 };
 
@@ -294,49 +58,18 @@ useEffect(() => {
     setSelectedDay(day);
   };
 
-  const CalendarBox = ({ day, month, year, onClick }: {
-  day: number;
-  month: number;
-  year: number;
-  onClick: () => void;
-}) => {
-  const { todos } = useTodos(day, month, year);
-  const [dailies, setDailies] = useState<any[]>([]);
-  const fetchDailies = async () => {
-    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
-    const data = await res.json();
-    setDailies(data);
+useEffect(() => {
+    const createDailies = async () => {
+      try {
+        const response = await fetch('/api/dailies');
+        const data = await response.json();
+        console.log('Dailies created:', data);
+      } catch (error) {
+        console.error('Failed to create dailies:', error);
       }
-  useEffect(() => {
-    fetchDailies();
-  }, [day, month, year]);
-
-
-  return (
-    <div 
-      className={`calendar-box ${isCurrentDay(day) ? 'current-day' : ''}`}
-      onClick={onClick}
-    >
-      <div className="calendar-date">{day}</div>
-      <div className="todo-preview">
-        {todos.slice(0, 2).map((todo) => (
-          <div 
-            key={todo.id} 
-            className={`todo-preview-item ${todo.completed ? 'completed' : ''}`}
-          >
-            • {todo.text}
-          </div>
-        ))}
-        {todos.length > 2 && (
-          <div className="todo-preview-more">+{todos.length - 2} more</div>
-        )}
-      </div>
-      {dailies.length > 0 && (
-        <DailyBox day={day} month={month} year={year} />
-      )}
-    </div>
-  );
-};
+    };
+    createDailies();
+  }); 
 
   return (
     <>
@@ -374,7 +107,7 @@ useEffect(() => {
     />
   ))}
     </main>
-     <Modal 
+     <TodoModal 
       isOpen={selectedDay !== null}
       onClose={() => setSelectedDay(null)}
       day={selectedDay ?? 0}

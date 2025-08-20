@@ -85,4 +85,5 @@ export async function PUT(request: Request) {
   } catch (error) {
     console.error("Failed to update daily", error);
   }
+
 }
