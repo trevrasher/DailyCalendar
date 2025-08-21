@@ -48,9 +48,12 @@ export const DailyModal = ({isOpen, onClose, day, month, year }: ModalProps) => 
               <input
                 type="checkbox"
                 checked={daily.completed}
-                onChange={() => toggleDaily(daily.id)}
+                onChange={() => {
+                  toggleDaily(daily.id)
+                  setDailies(prev => prev.map(d => (d.id === daily.id) ? { ...d, completed: !d.completed } : d))
+                }}
                 className="todo-checkbox"
-              />
+              />  
             </div>
           ))}
         </div>

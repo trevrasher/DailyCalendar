@@ -11,15 +11,24 @@ import { DailyBox } from "./DailyBox";
       year === today.getFullYear()
     );
   };
-  
 
-export const CalendarBox = ({ day, month, year, onClick }: {
+  interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
   day: number;
   month: number;
   year: number;
+}
+  
+
+export const CalendarBox = ({ day, month, year, todos, onClick }: {
+  day: number;
+  month: number;
+  year: number;
+  todos: Todo[];
   onClick: () => void;
 }) => {
-  const { todos } = useTodos(day, month, year);
   const [dailies, setDailies] = useState<any[]>([]);
   const fetchDailies = async () => {
     const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);

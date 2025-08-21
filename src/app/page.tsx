@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { DailyBox } from './components/DailyBox'
-import { DailyModal} from './components/DailyModal'
 import { TemplateList } from './components/TemplateList'
 import { TodoModal } from './components/TodoModal'
 import { CalendarBox } from './components/CalendarBox';
+import { useTodos, Todo } from './components/usetodos';
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthNames = [
@@ -23,6 +22,15 @@ export default function Page() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const { todos } = useTodos((new Date().getDay()), currentMonth, currentYear).fetchMonthTodos();
+  const todosByDay: { [key: number]: Todo[] } = {};
+  todos.forEach((todo: any) => {
+    if (!todosByDay[todo.day]) {
+      todosByDay[todo.day] = [];
+    }
+    todosByDay[todo.day].push(todo);
+  });
 
     const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -103,6 +111,7 @@ useEffect(() => {
       day={index + 1}
       month={currentMonth}
       year={currentYear}
+      todos={todosByDay[index + 1] ?? []}
       onClick={() => handleDayClick(index + 1)}
     />
   ))}

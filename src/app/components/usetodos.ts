@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-interface Todo {
+export interface Todo {
   id: number;
   text: string;
   completed: boolean;
@@ -13,16 +13,17 @@ interface Todo {
 export function useTodos(day: number, month: number, year: number) {
   const [todos, setTodos] = useState<Todo[]>([]);
 
-   useEffect(() => {
-    fetchTodos();
-  }, [day, month, year]);
-
   const fetchTodos = async () => {
     const response = await fetch(`/api/todos?day=${day}&month=${month}&year=${year}`);
     const data = await response.json();
     setTodos(data);
   };
   
+  const fetchMonthTodos = async() => {
+    const response = await fetch(`/api/todos/month?month=${month}&year=${year}`);
+    const data = await response.json();
+    setTodos(data);
+  }
 
 const addTodo = async (text: string) => {
     const response = await fetch('/api/todos', {
@@ -76,5 +77,7 @@ try {
     addTodo,
     deleteTodo,  
     toggleTodo,
+    fetchTodos,
+    fetchMonthTodos
   };
 }
