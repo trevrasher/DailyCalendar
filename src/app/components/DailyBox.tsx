@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
 import { DailyModal } from './DailyModal'
+import { useContext } from "react";
+import { CalendarContext } from "../context/CalendarContext";
 
-export const DailyBox = ({ day, month, year }: { 
+
+
+export const DailyBox = ({ day }: { 
   day: number;
-  month: number;
-  year: number;
 }) => {
+  const { monthTodos, monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
-  const [todayDailies, setTodayDailies] = useState<any[]>([]);
-  const fetchTodayDailies = async () => {
-    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
-    const data = await res.json();
-    setTodayDailies(data);
-  };
-  useEffect(() => {
-  fetchTodayDailies();
-  }, [day, month, year]);
-  
+
+  const dailies = monthDailies.filter(daily =>
+    daily.day === day &&
+    daily.month === selectedMonth &&
+    daily.year === selectedYear
+  );
+
   
   const completeDailiesCount = () => {
-    const comp = (todayDailies.filter((daily:any) => daily.completed)).length;
-    const total = todayDailies.length;
+    const comp = (dailies.filter((daily:any) => daily.completed)).length;
+    const total = dailies.length;
     if (total != 0) {
         return comp + " / " + total;
       }
@@ -29,8 +29,8 @@ export const DailyBox = ({ day, month, year }: {
   }
 
   const getDailyBoxColorClass = () => {
-    const complete = (todayDailies.filter((daily:any) => daily.completed)).length;
-    const total = todayDailies.length;
+    const complete = (dailies.filter((daily:any) => daily.completed)).length;
+    const total = dailies.length;
     if (total === 0) {
       return "dailyBox-Red";
     }
@@ -58,8 +58,6 @@ export const DailyBox = ({ day, month, year }: {
         isOpen={isDailyModalOpen}
         onClose={handleClose}
         day={day}
-        month={month}
-        year={year}
       />
     </div>
   );

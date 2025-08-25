@@ -7,23 +7,20 @@ export interface Todo {
   day: number;
   month: number;
   year: number;
-  
 }
 
 export function useTodos(day: number, month: number, year: number) {
   const [todos, setTodos] = useState<Todo[]>([]);
 
-  const fetchTodos = async () => {
-    const response = await fetch(`/api/todos?day=${day}&month=${month}&year=${year}`);
-    const data = await response.json();
-    setTodos(data);
-  };
-  
-  const fetchMonthTodos = async() => {
-    const response = await fetch(`/api/todos/month?month=${month}&year=${year}`);
+  const fetchTodos = async() => {
+    const response = await fetch(`/api/todos/?month=${month}&year=${year}`);
     const data = await response.json();
     setTodos(data);
   }
+
+  useEffect(() => {
+      fetchTodos();
+  }, [])
 
 const addTodo = async (text: string) => {
     const response = await fetch('/api/todos', {
@@ -78,6 +75,5 @@ try {
     deleteTodo,  
     toggleTodo,
     fetchTodos,
-    fetchMonthTodos
   };
 }

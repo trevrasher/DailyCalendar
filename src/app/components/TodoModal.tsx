@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useTodos } from './usetodos';
+import { useContext } from "react";
+import { useTodos, Todo} from "./usetodos";
+import { CalendarContext } from "../context/CalendarContext";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   day: number;
-  month: number;
-  year: number;
+
 }
 
   const monthNames = [
@@ -14,14 +15,29 @@ interface ModalProps {
     "July", "August", "September", "October", "November", "December"
   ];
 
-export const TodoModal = ({ isOpen, onClose, day, month, year }: ModalProps) => {
+export const TodoModal = ({ isOpen, onClose, day }: ModalProps) => {
   const [newTodo, setNewTodo] = useState('');
-  const { todos, addTodo, deleteTodo, toggleTodo} = useTodos(day, month, year);
+  
+const { monthTodos, setMonthTodos, selectedMonth, selectedYear} = useContext(CalendarContext);
+
+  const todos = monthTodos.filter(todo =>
+    todo.day === day &&
+    todo.month === selectedMonth &&
+    todo.year === selectedYear
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newTodo.trim()) {
-      addTodo(newTodo);
+      const newTodoObj: Todo = {
+        id: Date.now(), 
+        text: newTodo,
+        day,
+        month: selectedMonth,
+        year: selectedYear,
+        completed: false,
+    };
+      setMonthTodos((prev:Todo[]) => [...prev, newTodoObj])
       setNewTodo('');
     }
   };
@@ -31,7 +47,7 @@ export const TodoModal = ({ isOpen, onClose, day, month, year }: ModalProps) => 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>{monthNames[month]} {day}, {year}</h2>
+        <h2>{monthNames[selectedMonth]} {day}, {selectedYear}</h2>
         <form onSubmit={handleSubmit} className="todo-form">
           <input
             type="text"
@@ -48,11 +64,10 @@ export const TodoModal = ({ isOpen, onClose, day, month, year }: ModalProps) => 
               <input
                 type="checkbox"
                 checked={todo.completed}
-                onChange={() => toggleTodo(todo.id)}
                 className="todo-checkbox"
               />
               <span>{todo.text}</span>
-              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+              <button onClick={() => setMonthTodos((prev:Todo[]) => prev.filter(t => t.id !== todo.id))}>Delete</button>
             </div>
           ))}
         </div>

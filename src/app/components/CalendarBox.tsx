@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { useTodos } from "./usetodos";
 import { DailyBox } from "./DailyBox";
-
+import { useContext } from "react";
+import { CalendarContext } from "../context/CalendarContext";
 
   const isCurrentDay = (day: number, month:number, year:number) => {
     const today = new Date();
@@ -12,37 +11,30 @@ import { DailyBox } from "./DailyBox";
     );
   };
 
-  interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-  day: number;
-  month: number;
-  year: number;
-}
   
 
-export const CalendarBox = ({ day, month, year, todos, onClick }: {
+export const CalendarBox = ({ day, onClick }: {
   day: number;
-  month: number;
-  year: number;
-  todos: Todo[];
   onClick: () => void;
 }) => {
-  const [dailies, setDailies] = useState<any[]>([]);
-  const fetchDailies = async () => {
-    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
-    const data = await res.json();
-    setDailies(data);
-      }
-  useEffect(() => {
-    fetchDailies();
-  }, [day, month, year]);
+  const { monthTodos, monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
+
+    const todos = monthTodos.filter(todo =>
+    todo.day === day &&
+    todo.month === selectedMonth &&
+    todo.year === selectedYear
+  );
+
+    const dailies = monthDailies.filter(daily =>
+    daily.day === day &&
+    daily.month === selectedMonth &&
+    daily.year === selectedYear
+  );
 
 
   return (
     <div 
-      className={`calendar-box ${isCurrentDay(day, month, year) ? 'current-day' : ''}`}
+      className={`calendar-box ${isCurrentDay(day, selectedMonth, selectedYear) ? 'current-day' : ''}`}
       onClick={onClick}
     >
       <div className="calendar-date">{day}</div>
@@ -60,7 +52,7 @@ export const CalendarBox = ({ day, month, year, todos, onClick }: {
         )}
       </div>
       {dailies.length > 0 && (
-        <DailyBox day={day} month={month} year={year} />
+        <DailyBox day={day}/>
       )}
     </div>
   );

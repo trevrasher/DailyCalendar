@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { useDailies } from "./usedailies";
+import { useDailies, Daily } from "./usedailies";
+import { useContext } from "react";
+import { CalendarContext } from "../context/CalendarContext";
+
+
+
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   day: number;
-  month: number;
-  year: number;
 }
 
   const monthNames = [
@@ -14,33 +17,20 @@ interface ModalProps {
     "July", "August", "September", "October", "November", "December"
   ];
 
-export const DailyModal = ({isOpen, onClose, day, month, year }: ModalProps) => {
-  const [dailies, setDailies] = useState<any[]>([]);
-  const {toggleDaily} = useDailies(day, month, year);
-
-  useEffect(() => {
-    const fetchDailies = async () => {
-      try {
-        const response = await fetch(
-          `/api/dailies?day=${day}&month=${month}&year=${year}`
-        );
-        const data = await response.json();
-        setDailies(data);
-      } catch (error) {
-        console.error('Failed to fetch dailies:', error);
-      }
-    };
-    if (isOpen) {
-      fetchDailies();
-    }
-  }, [day, month, year, isOpen]);
+export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
+  const { monthTodos, monthDailies, setMonthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
+    const dailies = monthDailies.filter(daily =>
+    daily.day === day &&
+    daily.month === selectedMonth &&
+    daily.year === selectedYear
+  );
 
   if (!isOpen) return null;
 
   return (
   <div className="modal-overlay">
     <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2>Daily Tasks for {monthNames[month]} {day}, {year}</h2>
+        <h2>Daily Tasks for {monthNames[selectedMonth]} {day}, {selectedYear}</h2>
         <div className="dailies-list">
           {dailies.map((daily) => (
             <div key={daily.id} className="daily-item">
@@ -48,9 +38,12 @@ export const DailyModal = ({isOpen, onClose, day, month, year }: ModalProps) => 
               <input
                 type="checkbox"
                 checked={daily.completed}
-                onChange={() => {
-                  toggleDaily(daily.id)
-                  setDailies(prev => prev.map(d => (d.id === daily.id) ? { ...d, completed: !d.completed } : d))
+                  onChange={() => {
+                  setMonthDailies((prev: Daily[]) =>
+                    prev.map(d =>
+                      d.id === daily.id ? { ...d, completed: !d.completed } : d
+                    )
+                  );
                 }}
                 className="todo-checkbox"
               />  

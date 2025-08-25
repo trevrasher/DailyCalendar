@@ -1,27 +1,26 @@
 import { useState, useEffect } from 'react';
 
-interface Daily {
+export interface Daily {
   id: number;
   text: string;
   completed: boolean;
   day: number;
   month: number;
   year: number;
-  
 }
 
 export function useDailies(day: number, month: number, year: number) {
   const [dailies, setDailies] = useState<Daily[]>([]);
 
-   useEffect(() => {
-    fetchDailies();
-  }, [day, month, year]);
-
   const fetchDailies = async () => {
-    const response = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
+    const response = await fetch(`/api/dailies?month=${month}&year=${year}`);
     const data = await response.json();
     setDailies(data);
   };
+
+  useEffect(() => {
+    fetchDailies();
+  }, [month, year]);
 
 
   const toggleDaily = async (id: number) => {
@@ -49,7 +48,7 @@ try {
 };
  return {
     dailies,
-    toggleDaily
+    toggleDaily,
  }
  
 
