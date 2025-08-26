@@ -2,26 +2,26 @@ import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-    const dailies = await prisma.template.findMany()
-    return NextResponse.json(dailies);
+    const templates = await prisma.template.findMany()
+    return NextResponse.json(templates);
 }
 
 export async function POST(request: Request) {
     try {
         const json = await request.json()
 
-        const dailies = await prisma.template.create({
+        const templates = await prisma.template.create({
             data: {
                 text: json.text
             }
     })
-    console.log('Created todo:', dailies)  // Debug log
-    return NextResponse.json(dailies)
+    console.log('Created template:', templates)  // Debug log
+    return NextResponse.json(templates)
 
  } catch (error) {
-    console.error('Failed to create daily', error)  // Error log
+    console.error('Failed to create templates', error)  // Error log
     return NextResponse.json(
-      { error: 'Failed to create daily' },
+      { error: 'Failed to create templates' },
       { status: 500 }
     )
 }}
@@ -34,7 +34,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: 'Template deleted' });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to delete todo' },
+      { error: 'Failed to delete template' },
       { status: 500 }
     );
   }

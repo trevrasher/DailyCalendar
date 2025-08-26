@@ -1,35 +1,54 @@
 import { useEffect, useState } from "react";
 import { useTemplates } from "./usetemplates";
+import { useContext } from "react";
+import { CalendarContext } from "../context/CalendarContext";
+import { useDailies, Daily } from "./usedailies";
+
 
 export const TemplateList = () => {
   const { templates, addTemplate, deleteTemplate } = useTemplates('');
   const [newTemplate, setNewTemplate] = useState('');
-  const [todayDailies, setTodayDailies] = useState<any[]>([]);
-  const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth();
-  const year = today.getFullYear();
 
-  const fetchTodayDailies = async () => {
-    const res = await fetch(`/api/dailies?day=${day}&month=${month}&year=${year}`);
-    const data = await res.json();
-    setTodayDailies(data);
+
+  const { monthTodos, monthDailies, setMonthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
+  const dailies = monthDailies.filter(daily => daily.day === new Date().getDate());
+
+  const toggleTodayDailyByText = (text: string) => {
+    const daily = dailies.find((d: any) => d.text === text);
+    if (!daily) return;
+    setMonthDailies((prev: Daily[]) => prev.map(d => d.id === daily.id ? { ...d, completed: !d.completed } : d));
   };
 
   useEffect(() => {
-    fetchTodayDailies();
-  }, []);
+    createNewDailies();
+  }, [templates, monthDailies]);
+  
 
-  const toggleTodayDailyByText = async (text: string) => {
-    const daily = todayDailies.find((d: any) => d.text === text);
-    if (!daily) return;
-    await fetch('/api/dailies', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: daily.id, completed: !daily.completed }),
-    });
-    fetchTodayDailies();
-  };
+const createNewDailies = () => {
+  const today = new Date();
+  const todayDay = today.getDate();
+  // Find templates that do not have a daily for today
+  const newDailies = templates
+    .filter(template =>
+      !monthDailies.some(
+        d =>
+          d.text === template.text &&
+          d.day === todayDay 
+      )
+    )
+    .map(template => ({
+      id: Date.now() + Math.random(),
+      text: template.text,
+      completed: false,
+      day: todayDay,
+      month: selectedMonth,
+      year: selectedYear,
+    }));
+    console.log("a");
+  if (newDailies.length > 0) {
+    setMonthDailies(prev => [...prev, ...newDailies]);}
+  }
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +57,7 @@ export const TemplateList = () => {
       setNewTemplate('');
     }
   }
+
 
   return (
     <div className="template-container">
@@ -58,7 +78,7 @@ export const TemplateList = () => {
             <span>{template.text}</span>
             <input
               type="checkbox"
-              checked={!!todayDailies.find(d => d.text === template.text && d.completed)}
+              checked={!!dailies.find(d => d.text === template.text && d.completed)}
               onChange={() => toggleTodayDailyByText(template.text)}
               className="todo-checkbox"
             />

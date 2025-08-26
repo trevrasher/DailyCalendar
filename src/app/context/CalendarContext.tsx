@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect } from "react";
 import type { Daily } from "../components/usedailies";
 import type { Todo } from "../components/usetodos";
+import { useDailies } from "../components/usedailies";
+import { useTodos } from "../components/usetodos";
 
 interface CalendarContextType {
   monthDailies: Daily[];
@@ -28,6 +30,8 @@ export const CalendarContext = createContext<CalendarContextType>({
   setSelectedYear: () => {},
 });
 
+
+
 export const CalendarProvider = ({ children }: { children: React.ReactNode }) => {
   const [monthDailies, setMonthDailies] = useState<Daily[]>([]);
   const [monthTodos, setMonthTodos] = useState<Todo[]>([]);
@@ -35,16 +39,34 @@ export const CalendarProvider = ({ children }: { children: React.ReactNode }) =>
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
+  useEffect(() => {
+  if (monthDailies.length === 0) return; 
+  fetch('/api/dailies/context', {
+    method: 'PUT', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(monthDailies),
+  });
+  }, [monthDailies]);
+
+  useEffect(() => {
+    if (monthTodos.length === 0) return;
+    fetch('/api/todos/context', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(monthTodos),
+    });
+  }, [monthTodos]);
+
   // Fetch dailies for the month
   useEffect(() => {
-    fetch(`../api/dailies?month=${selectedMonth}&year=${selectedYear}`)
+    fetch(`/api/dailies?month=${selectedMonth}&year=${selectedYear}`)
       .then(res => res.json())
       .then(setMonthDailies);
   }, [selectedMonth, selectedYear]);
 
   // Fetch todos for the month
   useEffect(() => {
-    fetch(`../api/todos?month=${selectedMonth}&year=${selectedYear}`)
+    fetch(`/api/todos?month=${selectedMonth}&year=${selectedYear}`)
       .then(res => res.json())
       .then(setMonthTodos);
   }, [selectedMonth, selectedYear]);

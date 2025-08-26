@@ -4,8 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import { TemplateList } from './components/TemplateList'
 import { TodoModal } from './components/TodoModal'
 import { CalendarBox } from './components/CalendarBox';
-import { useTodos, Todo } from './components/usetodos';
-import { useDailies, Daily} from './components/usedailies';
+
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthNames = [
@@ -68,7 +67,7 @@ function CalendarPageContent() {
     setSelectedDay(day);
   };
 
-  return (
+  return (  
     <>
       <header className="header-container">
         <h1 className="header-title">calendar</h1>

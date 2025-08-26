@@ -20,9 +20,7 @@ interface ModalProps {
 export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
   const { monthTodos, monthDailies, setMonthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
     const dailies = monthDailies.filter(daily =>
-    daily.day === day &&
-    daily.month === selectedMonth &&
-    daily.year === selectedYear
+    daily.day === day
   );
 
   if (!isOpen) return null;
@@ -38,7 +36,7 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
               <input
                 type="checkbox"
                 checked={daily.completed}
-                  onChange={() => {
+                onChange={() => {
                   setMonthDailies((prev: Daily[]) =>
                     prev.map(d =>
                       d.id === daily.id ? { ...d, completed: !d.completed } : d
