@@ -39,24 +39,6 @@ export const CalendarProvider = ({ children }: { children: React.ReactNode }) =>
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  useEffect(() => {
-  if (monthDailies.length === 0) return; 
-  fetch('/api/dailies/context', {
-    method: 'PUT', 
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(monthDailies),
-  });
-  }, [monthDailies]);
-
-  useEffect(() => {
-    if (monthTodos.length === 0) return;
-    fetch('/api/todos/context', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(monthTodos),
-    });
-  }, [monthTodos]);
-
   // Fetch dailies for the month
   useEffect(() => {
     fetch(`/api/dailies?month=${selectedMonth}&year=${selectedYear}`)

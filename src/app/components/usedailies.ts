@@ -46,9 +46,22 @@ try {
     console.error('Failed to toggle daily:', error);
   }
 };
+
+  
+const addDaily = async (text: string) => {
+    const response = await fetch('/api/dailies', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, day, month, year, completed: false }),
+    });
+    const newDaily = await response.json();
+    setDailies([...dailies, newDaily]);
+  };
+
  return {
     dailies,
     toggleDaily,
+    addDaily,
  }
  
 

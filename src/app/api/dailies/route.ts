@@ -66,5 +66,31 @@ export async function PUT(request: Request) {
   } catch (error) {
     console.error("Failed to update daily", error);
   }
-
 }
+
+  export async function POST(request: Request) {
+  try {
+    const json = await request.json()
+    console.log('Received data:', json)  // Debug log
+
+    const daily = await prisma.daily.create({
+      data: {
+        text: json.text,
+        day: json.day,
+        month: json.month,
+        year: json.year,
+        completed: false
+      }
+    })
+
+    console.log('Created daily:', daily)  // Debug log
+    return NextResponse.json(daily)
+  } catch (error) {
+    console.error('Failed to create daily:', error)  // Error log
+    return NextResponse.json(
+      { error: 'Failed to create daily' },
+      { status: 500 }
+    )
+  }
+}
+

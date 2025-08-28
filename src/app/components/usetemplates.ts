@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';    
 
-interface template {
+export interface Template {
     id: number;
     text: string;
 }
 
 export function useTemplates(text: string) {
-    const[templates, setTemplates] = useState<template[]>([]);
+    const[templates, setTemplates] = useState<Template[]>([]);
 
     useEffect(() => {fetchTemplates();}, []);
 
