@@ -23,6 +23,8 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
     daily.day === day
   );
 
+  const {toggleDaily} = useDailies(new Date().getDate(), selectedMonth, selectedYear);
+
   if (!isOpen) return null;
 
   return (

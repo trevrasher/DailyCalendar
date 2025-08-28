@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { useTodos, Todo} from "./usetodos";
 import { CalendarContext } from "../context/CalendarContext";
@@ -17,8 +17,20 @@ interface ModalProps {
 
 export const TodoModal = ({ isOpen, onClose, day }: ModalProps) => {
   const [newTodo, setNewTodo] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
   
 const { monthTodos, setMonthTodos, selectedMonth, selectedYear} = useContext(CalendarContext);
+const { deleteTodo,addTodo,toggleTodo } = useTodos( selectedMonth, selectedYear);
 
   const todos = monthTodos.filter(todo =>
     todo.day === day &&
@@ -39,6 +51,7 @@ const { monthTodos, setMonthTodos, selectedMonth, selectedYear} = useContext(Cal
     };
       setMonthTodos((prev:Todo[]) => [...prev, newTodoObj])
       setNewTodo('');
+      addTodo(newTodo, day);
     }
   };
 
@@ -63,11 +76,12 @@ const { monthTodos, setMonthTodos, selectedMonth, selectedYear} = useContext(Cal
             <div key={todo.id} className="todo-item"> 
               <input
                 type="checkbox"
-                checked={todo.completed}
+                checked={!!todo.completed}
+                onChange={() => (toggleTodo(todo.id), setMonthTodos((prev:Todo[]) => prev.map(t => t.id === todo.id ? { ...t, completed: !t.completed } : t)) )}
                 className="todo-checkbox"
               />
               <span>{todo.text}</span>
-              <button onClick={() => setMonthTodos((prev:Todo[]) => prev.filter(t => t.id !== todo.id))}>Delete</button>
+              <button onClick={() => (setMonthTodos((prev:Todo[]) => prev.filter(t => t.id !== todo.id)), deleteTodo(todo.id))}>Delete</button>
             </div>
           ))}
         </div>

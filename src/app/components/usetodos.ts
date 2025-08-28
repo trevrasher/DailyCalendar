@@ -9,7 +9,7 @@ export interface Todo {
   year: number;
 }
 
-export function useTodos(day: number, month: number, year: number) {
+export function useTodos( month: number, year: number) {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   const fetchTodos = async() => {
@@ -22,11 +22,11 @@ export function useTodos(day: number, month: number, year: number) {
       fetchTodos();
   }, [])
 
-const addTodo = async (text: string) => {
+const addTodo = async (text: string, day:number) => {
     const response = await fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, day, month, year, completed: false }),
+      body: JSON.stringify({ text, month, year, day, completed: false }),
     });
     const newTodo = await response.json();
     setTodos([...todos, newTodo]);
