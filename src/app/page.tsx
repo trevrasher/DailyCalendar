@@ -39,6 +39,7 @@ function CalendarPageContent() {
     setSelectedMonth,
     selectedYear,
     setSelectedYear,
+    loading, // <-- add loading from context
   } = useContext(CalendarContext);
 
   const getDaysInMonth = (month: number, year: number) => {
@@ -67,44 +68,48 @@ function CalendarPageContent() {
     setSelectedDay(day);
   };
 
+  // Wait for context to finish loading before rendering the page
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (  
     <>
       <header className="header-container">
         <h1 className="header-title">calendar</h1>
       </header>
       <div className="templates">
-      <TemplateList />
+        <TemplateList />
       </div>
       <div className="calendar-nav">
-          <button onClick={handlePrevMonth}>&lt;</button>
-          <h2>{monthNames[selectedMonth]} {selectedYear}</h2>
-          <button onClick={handleNextMonth}>&gt;</button>
-        </div>
+        <button onClick={handlePrevMonth}>&lt;</button>
+        <h2>{monthNames[selectedMonth]} {selectedYear}</h2>
+        <button onClick={handleNextMonth}>&gt;</button>
+      </div>
       <main className="grid-container">
-        
-  {dayNames.map(name => (
-    <div key={name} className="day-header">
-      {name}
-    </div>
-  ))}
+        {dayNames.map(name => (
+          <div key={name} className="day-header">
+            {name}
+          </div>
+        ))}
 
-  {[...Array(getFirstDayOfMonth(selectedMonth, selectedYear))].map((_, index) => (
-    <div key={`empty-${index}`} className="calendar-box empty" />
-  ))}
-  
-  {[...Array(getDaysInMonth(selectedMonth, selectedYear))].map((_, index) => (
-    <CalendarBox
-      key={index}
-      day={index + 1}
-      onClick={() => handleDayClick(index + 1)}
-    />
-  ))}
-    </main>
-     <TodoModal 
-      isOpen={selectedDay !== null}
-      onClose={() => setSelectedDay(null)}
-      day={selectedDay ?? 0}
-    />
+        {[...Array(getFirstDayOfMonth(selectedMonth, selectedYear))].map((_, index) => (
+          <div key={`empty-${index}`} className="calendar-box empty" />
+        ))}
+        
+        {[...Array(getDaysInMonth(selectedMonth, selectedYear))].map((_, index) => (
+          <CalendarBox
+            key={index}
+            day={index + 1}
+            onClick={() => handleDayClick(index + 1)}
+          />
+        ))}
+      </main>
+      <TodoModal 
+        isOpen={selectedDay !== null}
+        onClose={() => setSelectedDay(null)}
+        day={selectedDay ?? 0}
+      />
     </>
   );
 }

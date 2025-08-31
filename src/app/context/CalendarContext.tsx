@@ -15,6 +15,7 @@ interface CalendarContextType {
   setSelectedMonth: React.Dispatch<React.SetStateAction<number>>;
   selectedYear: number;
   setSelectedYear: React.Dispatch<React.SetStateAction<number>>;
+  loading: boolean;
 }
 
 export const CalendarContext = createContext<CalendarContextType>({
@@ -28,9 +29,8 @@ export const CalendarContext = createContext<CalendarContextType>({
   setSelectedMonth: () => {},
   selectedYear: new Date().getFullYear(),
   setSelectedYear: () => {},
+  loading: true,
 });
-
-
 
 export const CalendarProvider = ({ children }: { children: React.ReactNode }) => {
   const [monthDailies, setMonthDailies] = useState<Daily[]>([]);
@@ -38,19 +38,19 @@ export const CalendarProvider = ({ children }: { children: React.ReactNode }) =>
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [loading, setLoading] = useState(true);
 
-  // Fetch dailies for the month
+  // Fetch dailies and todos for the month
   useEffect(() => {
-    fetch(`/api/dailies?month=${selectedMonth}&year=${selectedYear}`)
-      .then(res => res.json())
-      .then(setMonthDailies);
-  }, [selectedMonth, selectedYear]);
-
-  // Fetch todos for the month
-  useEffect(() => {
-    fetch(`/api/todos?month=${selectedMonth}&year=${selectedYear}`)
-      .then(res => res.json())
-      .then(setMonthTodos);
+    setLoading(true);
+    Promise.all([
+      fetch(`/api/dailies?month=${selectedMonth}&year=${selectedYear}`)
+        .then(res => res.json())
+        .then(setMonthDailies),
+      fetch(`/api/todos?month=${selectedMonth}&year=${selectedYear}`)
+        .then(res => res.json())
+        .then(setMonthTodos),
+    ]).finally(() => setLoading(false));
   }, [selectedMonth, selectedYear]);
 
   return (
@@ -65,7 +65,8 @@ export const CalendarProvider = ({ children }: { children: React.ReactNode }) =>
         selectedMonth,
         setSelectedMonth,
         selectedYear,
-        setSelectedYear
+        setSelectedYear,
+        loading
       }}
     >
       {children}

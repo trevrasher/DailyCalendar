@@ -10,33 +10,11 @@ export async function GET(request: Request) {
       const dailies = await prisma.daily.findMany({
         where: { month, year }
       });
-
-      if (dailies.length !== 0) {
-        return NextResponse.json(dailies);
-      } else {
-      const templates = await prisma.template.findMany();
-      const newDailies = await Promise.all(
-        templates.map(template =>
-          prisma.daily.create({
-            data: {
-              text: template.text,
-              completed: false,
-              day,
-              month,
-              year
-            }
-          })
-        )
-      );
-      return NextResponse.json({ 
-        message: 'Dailies created', 
-      });
+       return NextResponse.json(dailies);
+      } catch (error) {
+        console.error('Failed to fetch Dailies:', error);
+      }
     }
-
-  } catch (error) {
-    console.error('Failed to create Dailies:', error);
-  }
-}
 
 
 export async function DELETE(request: Request) {

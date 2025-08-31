@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { CalendarContext } from '../context/CalendarContext';
 
 export interface Daily {
   id: number;
@@ -9,60 +10,66 @@ export interface Daily {
   year: number;
 }
 
-export function useDailies(day: number, month: number, year: number) {
-  const [dailies, setDailies] = useState<Daily[]>([]);
+export function useDailies() {
+  const {
+    monthDailies,
+    setMonthDailies,
+  } = useContext(CalendarContext);
 
-  const fetchDailies = async () => {
-    const response = await fetch(`/api/dailies?month=${month}&year=${year}`);
-    const data = await response.json();
-    setDailies(data);
-  };
-
-  useEffect(() => {
-    fetchDailies();
-  }, [month, year]);
 
 
   const toggleDaily = async (id: number) => {
-try {
-    const dailyToUpdate = dailies.find(daily => daily.id === id);
-    if (!dailyToUpdate) return;
+    try {
+      const dailyToUpdate = monthDailies.find(daily => daily.id === id);
+      if (!dailyToUpdate) return;
 
-    const response = await fetch('/api/dailies', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id,
-        completed: !dailyToUpdate.completed
-      }),
-    });
+      const response = await fetch('/api/dailies', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          completed: !dailyToUpdate.completed,
+        }),
+      });
 
-     if (response.ok) {
-      setDailies(dailies.map(daily =>
-        daily.id === id ? { ...daily, completed: !daily.completed } : daily
-      ));
+      if (response.ok) {
+        setMonthDailies(monthDailies.map(daily =>
+          daily.id === id ? { ...daily, completed: !daily.completed } : daily
+        ));
+      }
+    } catch (error) {
+      console.error('Failed to toggle daily:', error);
     }
-  } catch (error) {
-    console.error('Failed to toggle daily:', error);
-  }
-};
+  };
 
-  
-const addDaily = async (text: string) => {
+  const addDaily = async (daily: Omit<Daily, 'id'>) => {
     const response = await fetch('/api/dailies', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, day, month, year, completed: false }),
+      body: JSON.stringify(daily),
     });
     const newDaily = await response.json();
-    setDailies([...dailies, newDaily]);
+    setMonthDailies([...monthDailies, newDaily]);
   };
 
- return {
-    dailies,
+  const deleteDaily = async (id: number) => {
+    try {
+      const response = await fetch(`/api/dailies?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setMonthDailies(monthDailies.filter(daily => daily.id !== id));
+      } else {
+        console.error('Failed to delete daily');
+      }
+    } catch (error) {
+      console.error('Failed to delete daily:', error);
+    }
+  };
+
+  return {
     toggleDaily,
     addDaily,
- }
- 
-
+    deleteDaily,
+  };
 }

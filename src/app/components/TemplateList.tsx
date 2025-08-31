@@ -9,28 +9,29 @@ export const TemplateList = () => {
   const { templates, addTemplate, deleteTemplate } = useTemplates('');
   const [newTemplate, setNewTemplate] = useState('');
 
-  const { monthTodos, monthDailies, setMonthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
-  const { addDaily, toggleDaily } = useDailies(new Date().getDate(), selectedMonth, selectedYear);
+  const {  monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
+  const { addDaily, toggleDaily } = useDailies();
+  
 
   const toggleTodayDailyByText = (text: string) => {
     const daily = monthDailies.find((d: any) => d.text === text && d.day === new Date().getDate());
     if (!daily) return;
-    setMonthDailies((prev: Daily[]) => prev.map(d => d.id === daily.id ? { ...d, completed: !d.completed } : d));
     toggleDaily(daily.id);
   };
 
-  useEffect(() => { 
-    createNewDailies();
-  }, [monthDailies]);
+useEffect(() => {
+  createNewDailies();
+}, [templates]);
+
 
 function templateHasDailyForToday(template: Template) {
-  return monthDailies.some(d => d.text == template.text && d.day == new Date().getDate());
+  return (monthDailies.some(d => d.text == template.text));
 }
 
 const createNewDailies = async () => {
   const todayDay = new Date().getDate();
   templates.forEach(template => {
-    if (!templateHasDailyForToday(template)) {
+    if ((!templateHasDailyForToday(template)) && selectedMonth == new Date().getMonth() && selectedYear == new Date().getFullYear()) {
       const newDaily: Daily = {
         id: Date.now() + Math.random(),  
         text: template.text,
@@ -39,13 +40,10 @@ const createNewDailies = async () => {
         month: selectedMonth,
         year: selectedYear,
       }
-      addDaily(template.text); 
-      setMonthDailies(prev => [...prev, newDaily]);
+      addDaily(newDaily); 
     }
   });
 }
-
-
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

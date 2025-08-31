@@ -23,7 +23,7 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
     daily.day === day
   );
 
-  const {toggleDaily} = useDailies(new Date().getDate(), selectedMonth, selectedYear);
+  const {toggleDaily} = useDailies();
 
   if (!isOpen) return null;
 
@@ -39,11 +39,9 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
                 type="checkbox"
                 checked={daily.completed}
                 onChange={() => {
-                  setMonthDailies((prev: Daily[]) =>
-                    prev.map(d =>
-                      d.id === daily.id ? { ...d, completed: !d.completed } : d
-                    )
-                  );
+                  (setMonthDailies((prev: Daily[]) =>
+                    prev.map(d =>d.id === daily.id ? { ...d, completed: !d.completed } : d))
+                    ,toggleDaily(daily.id));
                 }}
                 className="todo-checkbox"
               />  
