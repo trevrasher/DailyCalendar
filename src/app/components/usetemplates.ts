@@ -5,7 +5,7 @@ export interface Template {
     text: string;
 }
 
-export function useTemplates(text: string) {
+export function useTemplates() {
     const[templates, setTemplates] = useState<Template[]>([]);
 
     useEffect(() => {fetchTemplates();}, []);

@@ -6,7 +6,7 @@ import { useDailies, Daily } from "./usedailies";
 
 
 export const TemplateList = () => {
-  const { templates, addTemplate, deleteTemplate } = useTemplates('');
+  const { templates, addTemplate, deleteTemplate } = useTemplates();
   const [newTemplate, setNewTemplate] = useState('');
 
   const {  monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);

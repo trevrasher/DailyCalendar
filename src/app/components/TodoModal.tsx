@@ -29,8 +29,8 @@ export const TodoModal = ({ isOpen, onClose, day }: ModalProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
   
-const { monthTodos, setMonthTodos, selectedMonth, selectedYear} = useContext(CalendarContext);
-const { deleteTodo,addTodo,toggleTodo } = useTodos( selectedMonth, selectedYear);
+const { monthTodos, selectedMonth, selectedYear} = useContext(CalendarContext);
+const { deleteTodo,addTodo,toggleTodo } = useTodos();
 
   const todos = monthTodos.filter(todo =>
     todo.day === day &&
@@ -49,7 +49,6 @@ const { deleteTodo,addTodo,toggleTodo } = useTodos( selectedMonth, selectedYear)
         year: selectedYear,
         completed: false,
     };
-      setMonthTodos((prev:Todo[]) => [...prev, newTodoObj])
       setNewTodo('');
       addTodo(newTodo, day);
     }
@@ -77,11 +76,11 @@ const { deleteTodo,addTodo,toggleTodo } = useTodos( selectedMonth, selectedYear)
               <input
                 type="checkbox"
                 checked={!!todo.completed}
-                onChange={() => (toggleTodo(todo.id), setMonthTodos((prev:Todo[]) => prev.map(t => t.id === todo.id ? { ...t, completed: !t.completed } : t)) )}
+                onChange={() => toggleTodo(todo.id)}
                 className="todo-checkbox"
               />
               <span>{todo.text}</span>
-              <button onClick={() => (setMonthTodos((prev:Todo[]) => prev.filter(t => t.id !== todo.id)), deleteTodo(todo.id))}>Delete</button>
+              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
             </div>
           ))}
         </div>
