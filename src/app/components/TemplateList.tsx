@@ -10,8 +10,8 @@ export const TemplateList = () => {
   const [newTemplate, setNewTemplate] = useState('');
 
   const {  monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
-  const { addDaily, toggleDaily } = useDailies();
-  
+  const { addDaily, toggleDaily, deleteDaily } = useDailies();
+
 
   const toggleTodayDailyByText = (text: string) => {
     const daily = monthDailies.find((d: any) => d.text === text && d.day === new Date().getDate());
@@ -77,7 +77,20 @@ const createNewDailies = async () => {
               onChange={() => toggleTodayDailyByText(template.text)}
               className="todo-checkbox"
             />
-            <button className="delete-button" onClick={() => deleteTemplate(template.id)}>X</button>
+            <button
+              className="delete-button"
+              onClick={() => {
+                deleteTemplate(template.id);
+                const dailyToDelete = monthDailies.find(
+                  d => d.text === template.text && d.day === new Date().getDate()
+                );
+                if (dailyToDelete) {
+                  deleteDaily(dailyToDelete.id);
+                }
+              }}
+            >
+              X
+            </button>
           </div>
         ))}
       </div>

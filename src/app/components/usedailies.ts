@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { CalendarContext } from '../context/CalendarContext';
 
 export interface Daily {
