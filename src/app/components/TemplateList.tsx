@@ -14,7 +14,7 @@ export const TemplateList = () => {
 
 
   const toggleTodayDailyByText = (text: string) => {
-    const daily = monthDailies.find((d: any) => d.text === text && d.day === new Date().getDate());
+    const daily = monthDailies.find((d: Daily) => d.text === text && d.day === new Date().getDate());
     if (!daily) return;
     toggleDaily(daily.id);
   };

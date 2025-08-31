@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DailyModal } from './DailyModal'
 import { useContext } from "react";
 import { CalendarContext } from "../context/CalendarContext";
+import { Daily } from "./usedailies";
 
 
 
@@ -19,7 +20,7 @@ export const DailyBox = ({ day }: {
 
   
   const completeDailiesCount = () => {
-    const comp = (dailies.filter((daily:any) => daily.completed)).length;
+    const comp = (dailies.filter((daily:Daily) => daily.completed)).length;
     const total = dailies.length;
     if (total != 0) {
         return comp + " / " + total;
@@ -29,7 +30,7 @@ export const DailyBox = ({ day }: {
   }
 
   const getDailyBoxColorClass = () => {
-    const complete = (dailies.filter((daily:any) => daily.completed)).length;
+    const complete = (dailies.filter((daily:Daily) => daily.completed)).length;
     const total = dailies.length;
     if (total === 0) {
       return "dailyBox-Red";
