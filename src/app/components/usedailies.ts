@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { CalendarContext } from '../context/CalendarContext';
 
 export interface Daily {
-  id: number;
+  id?: number;
   text: string;
   completed: boolean;
   day: number;
@@ -52,6 +52,18 @@ export function useDailies() {
     setMonthDailies([...monthDailies, newDaily]);
   };
 
+
+  // Batch add function
+  const addDailies = async (dailies: Array<Omit<Daily, 'id'>>) => {
+    const response = await fetch('/api/dailies/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dailies),
+    });
+    const newDailies = await response.json();
+    setMonthDailies([...monthDailies, ...newDailies]);
+  };
+
   const deleteDaily = async (id: number) => {
     try {
       const response = await fetch(`/api/dailies?id=${id}`, {
@@ -70,6 +82,7 @@ export function useDailies() {
   return {
     toggleDaily,
     addDaily,
+    addDailies,
     deleteDaily,
   };
 }

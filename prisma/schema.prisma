@@ -23,10 +23,12 @@ model Template {
 }
 
 model Daily {
-  id Int @id @default(autoincrement())
-  text String
-  day Int
-  month Int  
-  year Int  
-  completed Boolean @default(false)
+  id        Int    @id @default(autoincrement())
+  text      String
+  completed Boolean
+  day       Int
+  month     Int
+  year      Int
+
+  @@unique([text, day, month, year])
 }
