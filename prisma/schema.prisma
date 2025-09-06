@@ -7,6 +7,14 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  dailies   Daily[]
+  todos     Todo[]
+  templates Template[]
+}
+
 model Todo {
   id        Int      @id @default(autoincrement())
   text      String
@@ -14,12 +22,15 @@ model Todo {
   day       Int
   month     Int
   year      Int
-  createdAt DateTime @default(now())
+  userId    Int
+  user      User   @relation(fields: [userId], references: [id])
 }
 
 model Template {
   id Int @id @default(autoincrement())
   text String
+  userId    Int
+  user      User   @relation(fields: [userId], references: [id])
 }
 
 model Daily {
@@ -29,6 +40,8 @@ model Daily {
   day       Int
   month     Int
   year      Int
+  userId    Int
+  user      User   @relation(fields: [userId], references: [id])
 
-  @@unique([text, day, month, year])
+  @@unique([text, day, month, year, userId])
 }
