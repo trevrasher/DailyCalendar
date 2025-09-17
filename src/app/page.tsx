@@ -4,6 +4,8 @@ import { useState, useEffect, useContext } from 'react';
 import { TemplateList } from './components/TemplateList'
 import { TodoModal } from './components/TodoModal'
 import { CalendarBox } from './components/CalendarBox';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -20,6 +22,16 @@ import { CalendarBox } from './components/CalendarBox';
 
 
 export default function Page() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  if (status === "loading") return <div>Loading...</div>;
   return (
     <CalendarProvider>
       <CalendarPageContent />
