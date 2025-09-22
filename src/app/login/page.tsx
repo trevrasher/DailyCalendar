@@ -1,8 +1,17 @@
 "use client";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 80 }}>

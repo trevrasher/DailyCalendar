@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { useTemplates, Template } from "./usetemplates";
-import { useContext } from "react";
 import { CalendarContext } from "../context/CalendarContext";
-import { useDailies, Daily, } from "./usedailies";
+import { useDailies, Daily } from "./usedailies";
 
 
 export const TemplateList = () => {
@@ -10,44 +9,39 @@ export const TemplateList = () => {
   const [newTemplate, setNewTemplate] = useState('');
 
   const {  monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
-  const { addDailies, toggleDaily, deleteDaily } = useDailies();
+  const { addDaily, toggleDaily, deleteDaily } = useDailies();
 
 
   const toggleTodayDailyByText = (text: string) => {
     const daily = monthDailies.find((d: Daily) => d.text === text && d.day === new Date().getDate());
     if (!daily) return;
-    if (daily.id !== undefined) {
-      toggleDaily(daily.id);
-    }
+    toggleDaily(daily.id);
   };
 
-
+const isFirstRender = useRef(true);
 useEffect(() => {
   createNewDailies();
 }, [templates]);
+
 
 function templateHasDailyForToday(template: Template) {
   return (monthDailies.some(d => d.text == template.text));
 }
 
-const createNewDailies = () => {
+const createNewDailies = async () => {
   const todayDay = new Date().getDate();
-  const newDailies: Omit<Daily, 'id'>[] = (templates
-    .filter(template =>
-      !templateHasDailyForToday(template) &&
-      selectedMonth == new Date().getMonth() &&
-      selectedYear == new Date().getFullYear()
-    )
-    .map(template => ({
-      text: template.text,
-      completed: false,
-      day: todayDay,
-      month: selectedMonth,
-      year: selectedYear,
-    })));
-  if (newDailies.length > 0) {
-    addDailies(newDailies);
-  }
+  templates.forEach(template => {
+    if ((!templateHasDailyForToday(template)) && selectedMonth == new Date().getMonth() && selectedYear == new Date().getFullYear()) {
+      const newDaily = {
+        text: template.text,
+        completed: false,
+        day: todayDay,
+        month: selectedMonth,
+        year: selectedYear,
+      }
+      addDaily(newDaily); 
+    }
+  });
 }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -89,7 +83,7 @@ const createNewDailies = () => {
                 const dailyToDelete = monthDailies.find(
                   d => d.text === template.text && d.day === new Date().getDate()
                 );
-                if (dailyToDelete && dailyToDelete.id !== undefined) {
+                if (dailyToDelete) {
                   deleteDaily(dailyToDelete.id);
                 }
               }}
