@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
+import { Session } from "next-auth";
 
 export async function GET(request: Request) {
   try {
@@ -46,10 +49,21 @@ export async function PUT(request: Request) {
   }
 }
 
-  export async function POST(request: Request) {
+export async function POST(request: Request) {
   try {
-    const json = await request.json()
-    console.log('Received data:', json)  // Debug log
+    const session: Session | null = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const json = await request.json();
 
     const daily = await prisma.daily.create({
       data: {
@@ -57,18 +71,14 @@ export async function PUT(request: Request) {
         day: json.day,
         month: json.month,
         year: json.year,
-        completed: false
+        completed: false,
+        userId: user.id
       }
-    })
+    });
 
-    console.log('Created daily:', daily)  // Debug log
-    return NextResponse.json(daily)
+    return NextResponse.json(daily);
   } catch (error) {
-    console.error('Failed to create daily:', error)  // Error log
-    return NextResponse.json(
-      { error: 'Failed to create daily' },
-      { status: 500 }
-    )
+    // ...existing error handling...
   }
 }
 

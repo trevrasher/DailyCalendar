@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
+import { Session } from "next-auth";
 
 export async function GET(request: Request) {
     const templates = await prisma.template.findMany()
@@ -8,11 +11,23 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     try {
+            const session: Session | null = await getServerSession(authOptions);
+      if (!session || !session.user?.email) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+  
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
+      });
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
         const json = await request.json()
 
         const templates = await prisma.template.create({
             data: {
-                text: json.text
+                text: json.text,
+                userId: user.id
             }
     })
     console.log('Created template:', templates)  // Debug log
