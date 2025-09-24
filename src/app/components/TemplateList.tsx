@@ -15,7 +15,9 @@ export const TemplateList = () => {
   const toggleTodayDailyByText = (text: string) => {
     const daily = monthDailies.find((d: Daily) => d.text === text && d.day === new Date().getDate());
     if (!daily) return;
+    if(daily.id!== undefined) {
     toggleDaily(daily.id);
+    }
   };
 
 const isFirstRender = useRef(true);
@@ -83,7 +85,7 @@ const createNewDailies = async () => {
                 const dailyToDelete = monthDailies.find(
                   d => d.text === template.text && d.day === new Date().getDate()
                 );
-                if (dailyToDelete) {
+                if (dailyToDelete && dailyToDelete.id !== undefined) {
                   deleteDaily(dailyToDelete.id);
                 }
               }}
