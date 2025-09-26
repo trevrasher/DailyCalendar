@@ -30,12 +30,11 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
   return (
   <div className="modal-overlay">
     <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2>Daily Tasks for {monthNames[selectedMonth]} {day}, {selectedYear}</h2>
+        <h2 className ="modal-date-header">{monthNames[selectedMonth]} {day}, {selectedYear}</h2>
         <div className="dailies-list">
           {dailies.map((daily) => (
             <div key={daily.id} className="daily-item">
-              <span>{daily.text}</span>
-              <input
+                <input
                 type="checkbox"
                 checked={daily.completed}
                 onChange={() => {
@@ -43,8 +42,8 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
                     prev.map(d =>d.id === daily.id ? { ...d, completed: !d.completed } : d))
                     ,toggleDaily(daily.id!));
                 }}
-                className="todo-checkbox"
-              />  
+                className="daily-checkbox"/>  
+              <span className="daily-text">{daily.text}</span>
             </div>
           ))}
         </div>

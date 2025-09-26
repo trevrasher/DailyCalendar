@@ -42,7 +42,6 @@ export const DailyBox = ({ day }: {
   }
 
   const handleClose = () => {
-    console.log("asd");
     setIsDailyModalOpen(false);
   };
   

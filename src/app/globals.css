@@ -45,7 +45,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+}
+
+.date-header {
+    color: rgb(39, 154, 207); 
+    font-size: 1.2rem;
+    font-family: var(--font-geist-sans);
 }
 
 /* containers */
@@ -64,10 +69,7 @@ body {
   border: 1px solid var(--foreground);
   border-radius: 8px;
   aspect-ratio:1/1;
-  min-width: 0px;  /* Prevents overflow */
-  min-height: 0px; /* Prevents overflow */
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor:pointer;
 }
 
@@ -91,17 +93,17 @@ body {
   min-width: 300px;
   max-width: 500px;
   position: relative;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align:left;
 }
 
 .modal-close {
   position: absolute;
-  top: 1rem;
+  font-family: var(--font-geist-sans, Arial, sans-serif);
+  top:1rem;
   right: 1rem;
   padding: 0.5rem 1rem;
   background: rgb(39, 154, 207);
   color: white;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -121,7 +123,6 @@ body {
   padding: 0.5rem 1rem;
   background: rgb(39, 154, 207);
   color: white;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1.2rem;
@@ -216,7 +217,6 @@ body {
 
 .delete-button {
   margin-left: auto;
-  background: none;
   color: rgb(39, 154, 207);
   font-size: 1.2rem;
   cursor: pointer;
@@ -251,4 +251,162 @@ body {
 }
 .dailyBox-Green {
   background: var(--green);
+}
+
+.todo-add-button {
+  position: absolute;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgb(39, 154, 207);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+.todo-delete-button {
+  position: absolute;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgb(39, 154, 207);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.daily-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgb(39, 154, 207);
+  border-radius: 4px;
+  background: var(--background);
+  cursor: pointer;
+  position: relative;
+  margin-right: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.daily-checkbox:checked {
+  background: rgb(39, 154, 207);
+  border-color: rgb(39, 154, 207);
+}
+
+.daily-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.modal-date-header {
+  margin-top: -8px;
+  font-size: 1rem;
+  font-family: var(--font-geist-sans, Arial, sans-serif);
+  letter-spacing: 1px;
+}
+
+.dailies-list {
+  margin-top:20px;
+}
+
+.daily-text {
+  margin-top: -12px;
+   font-family: var(--font-geist-sans, Arial, sans-serif);
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.template-add{
+  font-family: var(--font-geist-sans, Arial, sans-serif);
+  padding: 0.5rem 1rem;
+  margin-left:2px;
+  background: rgb(39, 154, 207);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+.template-add:hover {
+  background: rgb(28, 126, 171);
+}
+
+.template-input {
+  width: 150px;
+  max-width: 100%;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid rgb(39, 154, 207);
+}
+
+.template-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top:-8px;
+}
+
+.template-text {
+     font-family: var(--font-geist-sans, Arial, sans-serif);
+}
+
+.signout-container {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  z-index: 1001;
+}
+
+.signout-button {
+  padding: 0.5rem 1.2rem;
+  background: rgb(39, 154, 207);
+  color: white;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.signout-button:hover {
+  background: rgb(28, 126, 171);
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background: var(--background, #f8f9fa);
+}
+
+.login-title {
+  font-size: 2.2rem;
+  color: rgb(39, 154, 207);
+  font-family: var(--font-geist-sans, Arial, sans-serif);
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.login-button {
+  padding: 0.7rem 2rem;
+  background: rgb(39, 154, 207);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.login-button:hover {
+  background: rgb(28, 126, 171);
 }

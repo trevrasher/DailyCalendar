@@ -14,18 +14,17 @@ export default function LoginPage() {
   }, [session, router]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 80 }}>
-      <h2>Login</h2>
-      {session ? (
-        <>
-          <p>Signed in as {session.user?.email}</p>
-          <button onClick={() => signOut()}>Sign out</button>
-        </>
-      ) : (
-        <>
-          <button onClick={() => signIn('google')}>Sign in with Google</button>
-        </>
-      )}
-    </div>
+<div className="login-container">
+  <h2 className="login-title">Login</h2>
+  {session ? (
+    <>
+      <button className="login-button" onClick={() => signOut()}>Sign out</button>
+    </>
+  ) : (
+    <>
+      <button className="login-button" onClick={() => signIn('google')}>Sign in with Google</button>
+    </>
+  )}
+</div>
   );
 }

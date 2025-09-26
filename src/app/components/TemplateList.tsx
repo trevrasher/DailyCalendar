@@ -64,7 +64,6 @@ const createNewDailies = () => {
     }
   }
 
-
   return (
     <div className="template-container">
       <h2 className="dailies-header">dailies</h2>
@@ -73,21 +72,22 @@ const createNewDailies = () => {
           type="text"
           value={newTemplate}
           onChange={(e) => setNewTemplate(e.target.value)}
-          placeholder="Add new template..."
+          placeholder="Add new daily..."
           className="template-input"
         />
-        <button type="submit">Add</button>
+        <button type="submit" className="template-add">Add</button>
       </form>
       <div className="template-list">
         {templates.map((template) => (
           <div key={template.id} className="template-item">
-            <span>{template.text}</span>
-            <input
+              <input
               type="checkbox"
               checked={!!monthDailies.find(d => d.text === template.text && d.completed && d.day === new Date().getDate())}
               onChange={() => toggleTodayDailyByText(template.text)}
-              className="todo-checkbox"
+              className="daily-checkbox"
             />
+            <span className="template-text">{template.text}</span>
+
             <button
               className="delete-button"
               onClick={() => {

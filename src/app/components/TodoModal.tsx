@@ -68,7 +68,7 @@ const { deleteTodo,addTodo,toggleTodo } = useTodos();
             placeholder="Add new todo..."
             className="todo-input"
           />
-          <button type="submit" className="todo-button">Add</button>
+          <button type="submit" className="todo-add-button">Add</button>
         </form>
         <div className="todo-list">
           {todos.map((todo) => (
@@ -80,7 +80,7 @@ const { deleteTodo,addTodo,toggleTodo } = useTodos();
                 className="todo-checkbox"
               />
               <span>{todo.text}</span>
-              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+              <button onClick={() => deleteTodo(todo.id)} className="todo-delete-button">Delete</button>
             </div>
           ))}
         </div>

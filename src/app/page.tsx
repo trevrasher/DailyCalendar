@@ -1,11 +1,12 @@
 "use client";
 import { CalendarProvider, CalendarContext } from './context/CalendarContext';
-import { useState, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { TemplateList } from './components/TemplateList'
 import { TodoModal } from './components/TodoModal'
 import { CalendarBox } from './components/CalendarBox';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -41,17 +42,13 @@ export default function Page() {
 
 function CalendarPageContent() {
   const {
-    monthDailies,
-    setMonthDailies,
-    monthTodos,
-    setMonthTodos,
     selectedDay,
     setSelectedDay,
     selectedMonth,
     setSelectedMonth,
     selectedYear,
     setSelectedYear,
-    loading, // <-- add loading from context
+    loading, 
   } = useContext(CalendarContext);
 
   const getDaysInMonth = (month: number, year: number) => {
@@ -80,13 +77,15 @@ function CalendarPageContent() {
     setSelectedDay(day);
   };
 
-  // Wait for context to finish loading before rendering the page
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (  
     <>
+      <div className="signout-container">
+        <button className="signout-button" onClick={() => signOut()}>Sign Out</button>
+      </div>
       <header className="header-container">
         <h1 className="header-title">calendar</h1>
       </header>
@@ -95,7 +94,7 @@ function CalendarPageContent() {
       </div>
       <div className="calendar-nav">
         <button onClick={handlePrevMonth}>&lt;</button>
-        <h2>{monthNames[selectedMonth]} {selectedYear}</h2>
+        <h2 className="date-header">{monthNames[selectedMonth]} {selectedYear}</h2>
         <button onClick={handleNextMonth}>&gt;</button>
       </div>
       <main className="grid-container">
