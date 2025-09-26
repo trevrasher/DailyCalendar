@@ -9,7 +9,7 @@ export const TemplateList = () => {
   const [newTemplate, setNewTemplate] = useState('');
 
   const {  monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
-  const { addDaily, toggleDaily, deleteDaily } = useDailies();
+  const { addDailies, toggleDaily, deleteDaily } = useDailies();
 
 
   const toggleTodayDailyByText = (text: string) => {
@@ -20,31 +20,41 @@ export const TemplateList = () => {
     }
   };
 
-const isFirstRender = useRef(true);
 useEffect(() => {
   createNewDailies();
 }, [templates]);
 
 
 function templateHasDailyForToday(template: Template) {
-  return (monthDailies.some(d => d.text == template.text));
+  const today = new Date();
+  return monthDailies.some(d =>
+    d.text === template.text &&
+    d.day === today.getDate() &&
+    d.month === today.getMonth() &&
+    d.year === today.getFullYear()
+  );
+}
+const createNewDailies = () => {
+  const todayDay = new Date().getDate();
+  const newDailies: Omit<Daily, 'id'>[] = (templates
+    .filter(template =>
+      !templateHasDailyForToday(template) &&
+      selectedMonth == new Date().getMonth() &&
+      selectedYear == new Date().getFullYear()
+    )
+    .map(template => ({
+      text: template.text,
+      completed: false,
+      day: todayDay,
+      month: selectedMonth,
+      year: selectedYear,
+    })));
+  if (newDailies.length > 0) {
+    addDailies(newDailies);
+  }
 }
 
-const createNewDailies = async () => {
-  const todayDay = new Date().getDate();
-  templates.forEach(template => {
-    if ((!templateHasDailyForToday(template)) && selectedMonth == new Date().getMonth() && selectedYear == new Date().getFullYear()) {
-      const newDaily = {
-        text: template.text,
-        completed: false,
-        day: todayDay,
-        month: selectedMonth,
-        year: selectedYear,
-      }
-      addDaily(newDaily); 
-    }
-  });
-}
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,4 +107,6 @@ const createNewDailies = async () => {
       </div>
     </div>
   );
+
 };
+

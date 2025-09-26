@@ -1,7 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { Session } from "next-auth";
+import { NextResponse } from 'next/server'
+
 
 type DailyInput = {
   text: string;
@@ -31,7 +33,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    // Prepare data for createMany, including userId
     const data = (json as DailyInput[]).map((item) => ({
       text: item.text,
       day: item.day,
@@ -40,11 +41,9 @@ export async function POST(request: Request) {
       completed: false,
       userId: user.id
     }));
-    // Use createMany for batch insert
     const result = await prisma.daily.createMany({
       data
     });
-    // Fetch the newly created dailies (not returned by createMany)
     const createdDailies = await prisma.daily.findMany({
       where: {
         OR: data.map(d => ({
