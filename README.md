@@ -1,1 +1,1 @@
-Simple, lightweight calendar app with automatically added daily tasks.
+Simple calendar app with automatically added daily tasks.

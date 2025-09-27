@@ -1,5 +1,0 @@
-Fix Css  
-Fix Window Resizing
-Deploy/ change db language
-Check security of id deletion
-
