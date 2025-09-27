@@ -49,7 +49,7 @@ export const DailyBox = ({ day }: {
     
     <div className={`dailyBox-container ${getDailyBoxColorClass()}`} onClick={(e) => {
       e.stopPropagation();
-      setIsDailyModalOpen(true);
+      if (!isDailyModalOpen) setIsDailyModalOpen(true);
     }}>
         <div className={`dailyBox-text`}>
           {completeDailiesCount()}

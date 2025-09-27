@@ -27,33 +27,39 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
 
   if (!isOpen) return null;
 
-  return (
-  <div className="modal-overlay">
-    <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2 className ="modal-date-header">{monthNames[selectedMonth]} {day}, {selectedYear}</h2>
-        <div className="dailies-list">
-          {dailies.map((daily) => (
-            <div key={daily.id} className="daily-item">
-                <input
-                type="checkbox"
-                checked={daily.completed}
-                onChange={() => {
-                  (setMonthDailies((prev: Daily[]) =>
-                    prev.map(d =>d.id === daily.id ? { ...d, completed: !d.completed } : d))
-                    ,toggleDaily(daily.id!));
-                }}
-                className="daily-checkbox"/>  
-              <span className="daily-text">{daily.text}</span>
-            </div>
-          ))}
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+    return (
+      <div className="modal-overlay" onClick={handleOverlayClick}>
+        <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <h2 className ="modal-date-header">{monthNames[selectedMonth]} {day}, {selectedYear}</h2>
+          <div className="dailies-list">
+            {dailies.map((daily) => (
+              <div key={daily.id} className="daily-item">
+                  <input
+                  type="checkbox"
+                  checked={daily.completed}
+                  onChange={() => {
+                    (setMonthDailies((prev: Daily[]) =>
+                      prev.map(d =>d.id === daily.id ? { ...d, completed: !d.completed } : d))
+                      ,toggleDaily(daily.id!));
+                  }}
+                  className="daily-checkbox"/>  
+                <span className="daily-text">{daily.text}</span>
+              </div>
+            ))}
+          </div>
+          <button 
+            onClick={onClose} 
+            className="modal-close"
+          >
+            Close
+          </button>
         </div>
-        <button 
-          onClick={onClose} 
-          className="modal-close"
-        >
-          Close
-        </button>
       </div>
-    </div>
-  );
+    );
 };

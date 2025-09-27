@@ -1,12 +1,13 @@
 "use client";
 import { CalendarProvider, CalendarContext } from './context/CalendarContext';
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { TemplateList } from './components/TemplateList'
 import { TodoModal } from './components/TodoModal'
 import { CalendarBox } from './components/CalendarBox';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { NavModal } from './components/NavModal';
 
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -32,7 +33,6 @@ export default function Page() {
     }
   }, [status, router]);
 
-  if (status === "loading") return <div>Loading...</div>;
   return (
     <CalendarProvider>
       <CalendarPageContent />
@@ -77,9 +77,7 @@ function CalendarPageContent() {
     setSelectedDay(day);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const [isNavModalOpen, setIsNavModalOpen] = useState(false);
 
   return (  
     <>
@@ -93,9 +91,9 @@ function CalendarPageContent() {
         <TemplateList />
       </div>
       <div className="calendar-nav">
-        <button onClick={handlePrevMonth}>&lt;</button>
-        <h2 className="date-header">{monthNames[selectedMonth]} {selectedYear}</h2>
-        <button onClick={handleNextMonth}>&gt;</button>
+        <button onClick={handlePrevMonth}>{"<"}</button>
+        <button className="date-header" onClick={() => setIsNavModalOpen(true)} >{monthNames[selectedMonth]} {selectedYear}</button>
+        <button onClick={handleNextMonth}>{">"}</button>
       </div>
       <main className="grid-container">
         {dayNames.map(name => (
@@ -121,6 +119,7 @@ function CalendarPageContent() {
         onClose={() => setSelectedDay(null)}
         day={selectedDay ?? 0}
       />
+      <NavModal isOpen={isNavModalOpen} onClose={() => setIsNavModalOpen(false)} />
     </>
   );
 }

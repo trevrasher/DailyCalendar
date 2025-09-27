@@ -28,9 +28,15 @@ export const TodoModal = ({ isOpen, onClose, day }: ModalProps) => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
-  
-const { monthTodos, selectedMonth, selectedYear} = useContext(CalendarContext);
-const { deleteTodo,addTodo,toggleTodo } = useTodos();
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const { monthTodos, selectedMonth, selectedYear} = useContext(CalendarContext);
+  const { deleteTodo,addTodo,toggleTodo } = useTodos();
 
   const todos = monthTodos.filter(todo =>
     todo.day === day &&
@@ -57,7 +63,7 @@ const { deleteTodo,addTodo,toggleTodo } = useTodos();
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content">
         <h2>{monthNames[selectedMonth]} {day}, {selectedYear}</h2>
         <form onSubmit={handleSubmit} className="todo-form">
@@ -66,7 +72,7 @@ const { deleteTodo,addTodo,toggleTodo } = useTodos();
             value={newTodo}
             onChange={(e) => setNewTodo(e.target.value)}
             placeholder="Add new todo..."
-            className="todo-input"
+            className="template-input"
           />
           <button type="submit" className="todo-add-button">Add</button>
         </form>
