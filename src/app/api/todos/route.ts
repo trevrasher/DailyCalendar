@@ -81,5 +81,9 @@ export async function PUT(request: Request) {
     return NextResponse.json(updatedTodo);
   } catch (error) {
     console.error("Failed to update todo", error);
+    return NextResponse.json(
+      { error: 'Failed to update todo' },
+      { status: 500 }
+    );
   }
 }

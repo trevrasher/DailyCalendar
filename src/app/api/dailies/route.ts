@@ -49,6 +49,10 @@ export async function PUT(request: Request) {
     return NextResponse.json(updatedDaily);
   } catch (error) {
     console.error("Failed to update daily", error);
+    return NextResponse.json(
+      { error: 'Failed to update daily' },
+      { status: 500 }
+    );
   }
 }
 
