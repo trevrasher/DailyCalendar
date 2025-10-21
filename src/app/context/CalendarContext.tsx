@@ -40,7 +40,6 @@ export const CalendarProvider = ({ children }: { children: React.ReactNode }) =>
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(true);
 
-  // Fetch dailies and todos for the month
   useEffect(() => {
     setLoading(true);
     Promise.all([

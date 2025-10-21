@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "app/api/**/*.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "buildCommand": "npm run build"
+}
