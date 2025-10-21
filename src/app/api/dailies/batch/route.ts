@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { prisma } from "@/lib/prisma";
-import { Session } from "next-auth";
 import { NextResponse } from 'next/server'
 
 
@@ -41,9 +40,6 @@ export async function POST(request: Request) {
       completed: false,
       userId: user.id
     }));
-    const result = await prisma.daily.createMany({
-      data
-    });
     const createdDailies = await prisma.daily.findMany({
       where: {
         OR: data.map(d => ({

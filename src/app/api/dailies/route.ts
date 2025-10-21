@@ -7,7 +7,6 @@ import { Session } from "next-auth";
 export async function GET(request: Request) {
   try {
       const { searchParams } = new URL(request.url);
-      const day = Number(searchParams.get('day'));
       const month = Number(searchParams.get('month'));
       const year = Number(searchParams.get('year'));
       const dailies = await prisma.daily.findMany({
@@ -78,7 +77,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(daily);
   } catch (error) {
-    // ...existing error handling...
+    console.error('Failed to create daily:', error);
+    return NextResponse.json(
+      { error: 'Failed to create daily' },
+      { status: 500 }
+    );
   }
 }
 

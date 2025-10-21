@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DailyModal } from './DailyModal'
 import { useContext } from "react";
 import { CalendarContext } from "../context/CalendarContext";
@@ -9,7 +9,7 @@ import { Daily } from "./usedailies";
 export const DailyBox = ({ day }: { 
   day: number;
 }) => {
-  const { monthTodos, monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
+  const { monthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
 
   const dailies = monthDailies.filter(daily =>
@@ -36,9 +36,9 @@ export const DailyBox = ({ day }: {
       return "dailyBox-Red";
     }
     if ((complete / total ) === 1) {
-        return "dailyBox-Green"
+        return "dailyBox-Green";
     }
-    return "dailyBox-Red"
+    return "dailyBox-Red";
   }
 
   const handleClose = () => {

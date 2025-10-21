@@ -17,14 +17,17 @@ const monthNames = [
 
 
 export const NavModal = ({isOpen, onClose }: ModalProps) => {
-    if (!isOpen) return null;
     const {setSelectedMonth, selectedYear, setSelectedYear} = useContext(CalendarContext);
-    const [tempYear, setTempYear] = useState(selectedYear)
+    const [tempYear, setTempYear] = useState(selectedYear);
+    
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
             onClose();
         }
     };
+    
+    if (!isOpen) return null;
+    
     return (
         <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="nav-modal-container">
