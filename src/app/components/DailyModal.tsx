@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDailies, Daily } from "./usedailies";
 import { useContext } from "react";
 import { CalendarContext } from "../context/CalendarContext";

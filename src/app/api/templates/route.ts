@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { Session } from "next-auth";
 
-export async function GET(request: Request) {
+export async function GET() {
     const templates = await prisma.template.findMany()
     return NextResponse.json(templates);
 }
@@ -48,6 +48,7 @@ export async function DELETE(request: Request) {
     await prisma.template.delete({where: {id}});
     return NextResponse.json({ message: 'Template deleted' });
   } catch (error) {
+    console.error('Failed to delete template:', error);
     return NextResponse.json(
       { error: 'Failed to delete template' },
       { status: 500 }
