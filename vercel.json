@@ -1,8 +1,6 @@
 {
-  "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "@vercel/node"
-    }
-  },
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "engines": {
+    "node": "18.x"
+  }
 }
