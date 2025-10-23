@@ -72,21 +72,21 @@ export const TodoModal = ({ isOpen, onClose, day }: ModalProps) => {
             value={newTodo}
             onChange={(e) => setNewTodo(e.target.value)}
             placeholder="Add new todo..."
-            className="template-input"
+            className="template-input" 
           />
           <button type="submit" className="todo-add-button">Add</button>
         </form>
-        <div className="todo-list">
+        <div className="template-list">
           {todos.map((todo) => (
-            <div key={todo.id} className="todo-item"> 
+            <div key={todo.id} className="template-item"> 
               <input
                 type="checkbox"
                 checked={!!todo.completed}
                 onChange={() => toggleTodo(todo.id)}
-                className="todo-checkbox"
+                className="daily-checkbox"
               />
               <span>{todo.text}</span>
-              <button onClick={() => deleteTodo(todo.id)} className="todo-delete-button">Delete</button>
+              <button onClick={() => deleteTodo(todo.id)} className="delete-button">X</button>
             </div>
           ))}
         </div>

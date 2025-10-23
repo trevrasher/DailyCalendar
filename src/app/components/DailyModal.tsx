@@ -18,7 +18,7 @@ interface ModalProps {
   ];
 
 export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
-  const { monthTodos, monthDailies, setMonthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
+  const {  monthDailies, setMonthDailies, selectedMonth, selectedYear} = useContext(CalendarContext);
     const dailies = monthDailies.filter(daily =>
     daily.day === day
   );
@@ -39,7 +39,7 @@ export const DailyModal = ({isOpen, onClose, day }: ModalProps) => {
           <h2 className ="modal-date-header">{monthNames[selectedMonth]} {day}, {selectedYear}</h2>
           <div className="dailies-list">
             {dailies.map((daily) => (
-              <div key={daily.id} className="daily-item">
+              <div key={daily.id}>
                   <input
                   type="checkbox"
                   checked={daily.completed}

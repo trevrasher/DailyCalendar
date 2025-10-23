@@ -30,11 +30,11 @@ export async function POST(request: Request) {
                 userId: user.id
             }
     })
-    console.log('Created template:', templates)  // Debug log
+    console.log('Created template:', templates)  
     return NextResponse.json(templates)
 
  } catch (error) {
-    console.error('Failed to create templates', error)  // Error log
+    console.error('Failed to create templates', error)  
     return NextResponse.json(
       { error: 'Failed to create templates' },
       { status: 500 }

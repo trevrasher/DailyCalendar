@@ -40,7 +40,11 @@ export async function POST(request: Request) {
       completed: false,
       userId: user.id
     }));
-    const createdDailies = await prisma.daily.findMany({
+    const createdDailies = await prisma.daily.createMany({
+      data: data
+    });
+    
+    const newDailies = await prisma.daily.findMany({
       where: {
         OR: data.map(d => ({
           text: d.text,
@@ -51,7 +55,8 @@ export async function POST(request: Request) {
         }))
       }
     });
-    return NextResponse.json(createdDailies);
+    
+    return NextResponse.json(newDailies);
   } catch (error) {
     console.error('Failed to batch create dailies:', error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

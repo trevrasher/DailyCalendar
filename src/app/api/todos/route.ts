@@ -30,7 +30,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
           }
     const json = await request.json()
-    console.log('Received data:', json)  // Debug log
+    console.log('Received data:', json)  
 
     const todo = await prisma.todo.create({
       data: {
@@ -43,10 +43,10 @@ export async function POST(request: Request) {
       }
     })
     
-    console.log('Created todo:', todo)  // Debug log
+    console.log('Created todo:', todo) 
     return NextResponse.json(todo)
   } catch (error) {
-    console.error('Failed to create todo:', error)  // Error log
+    console.error('Failed to create todo:', error)  
     return NextResponse.json(
       { error: 'Failed to create todo' },
       { status: 500 }

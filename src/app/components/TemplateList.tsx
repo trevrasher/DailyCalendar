@@ -36,12 +36,32 @@ function templateHasDailyForToday(template: Template) {
 }
 const createNewDailies = () => {
   const todayDay = new Date().getDate();
+  const todayMonth = new Date().getMonth();
+  const todayYear = new Date().getFullYear();
+  
+  console.log('=== DEBUG: Creating dailies ===');
+  console.log('Today:', { day: todayDay, month: todayMonth, year: todayYear });
+  console.log('Selected:', { month: selectedMonth, year: selectedYear });
+  console.log('Templates count:', templates.length);
+  console.log('Templates:', templates.map(t => ({ id: t.id, text: t.text })));
+  console.log('Month dailies count:', monthDailies.length);
+  console.log('Month dailies:', monthDailies.map(d => ({ id: d.id, text: d.text, day: d.day, month: d.month, year: d.year })));
+  
   const newDailies: Omit<Daily, 'id'>[] = (templates
-    .filter(template =>
-      !templateHasDailyForToday(template) &&
-      selectedMonth == new Date().getMonth() &&
-      selectedYear == new Date().getFullYear()
-    )
+    .filter(template => {
+      const hasDaily = templateHasDailyForToday(template);
+      const isCurrentMonth = selectedMonth === todayMonth;
+      const isCurrentYear = selectedYear === todayYear;
+      
+      console.log(`Template "${template.text}":`, {
+        hasDaily,
+        isCurrentMonth,
+        isCurrentYear,
+        willCreateDaily: !hasDaily && isCurrentMonth && isCurrentYear
+      });
+      
+      return !hasDaily && isCurrentMonth && isCurrentYear;
+    })
     .map(template => ({
       text: template.text,
       completed: false,
@@ -49,9 +69,16 @@ const createNewDailies = () => {
       month: selectedMonth,
       year: selectedYear,
     })));
+    
+  console.log('New dailies to create:', newDailies);
+  
   if (newDailies.length > 0) {
+    console.log('Calling addDailies with:', newDailies);
     addDailies(newDailies);
+  } else {
+    console.log('No new dailies to create');
   }
+  console.log('=== END DEBUG ===');
 }
 
 
@@ -87,7 +114,6 @@ const createNewDailies = () => {
               className="daily-checkbox"
             />
             <span className="template-text">{template.text}</span>
-
             <button
               className="delete-button"
               onClick={() => {

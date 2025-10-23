@@ -52,8 +52,6 @@ export function useDailies() {
     setMonthDailies([...monthDailies, newDaily]);
   };
 
-
-  // Batch add function
   const addDailies = async (dailies: Array<Omit<Daily, 'id'>>) => {
     const response = await fetch('/api/dailies/batch', {
       method: 'POST',
