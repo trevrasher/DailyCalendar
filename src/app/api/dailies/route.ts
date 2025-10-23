@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { memoryStore, findOrCreateUser } from '@/lib/memory-store'
 import { NextResponse } from 'next/server'
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
       const { searchParams } = new URL(request.url);
       const month = Number(searchParams.get('month'));
       const year = Number(searchParams.get('year'));
-      const dailies = await prisma.daily.findMany({
+      const dailies = await memoryStore.daily.findMany({
         where: { month, year }
       });
        return NextResponse.json(dailies);
@@ -27,7 +27,7 @@ export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = Number(searchParams.get('id'))
   try {
-    await prisma.daily.delete({where: {id}});
+    await memoryStore.daily.delete({where: {id}});
     return NextResponse.json({ message: 'Daily deleted' });
   } catch (error) {
     return NextResponse.json(
@@ -42,7 +42,7 @@ export async function PUT(request: Request) {
     const json = await request.json();
     const {id, completed} = json;
 
-    const updatedDaily = await prisma.daily.update({
+    const updatedDaily = await memoryStore.daily.update({
       where: { id: Number(id) },
       data: { completed }
     });
@@ -63,16 +63,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const user = findOrCreateUser(session.user.email, session.user.name || undefined);
 
     const json = await request.json();
 
-    const daily = await prisma.daily.create({
+    const daily = await memoryStore.daily.create({
       data: {
         text: json.text,
         day: json.day,

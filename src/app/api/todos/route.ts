@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { memoryStore, findOrCreateUser } from '@/lib/memory-store'
 import { NextResponse } from 'next/server'
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const month = Number(searchParams.get('month'))
   const year = Number(searchParams.get('year'))
 
-  const todos = await prisma.todo.findMany({
+  const todos = await memoryStore.todo.findMany({
     where: { month, year }
   })
   
@@ -23,16 +23,12 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
           }
       
-          const user = await prisma.user.findUnique({
-            where: { email: session.user.email }
-          });
-          if (!user) {
-            return NextResponse.json({ error: "User not found" }, { status: 404 });
-          }
+          const user = findOrCreateUser(session.user.email, session.user.name || undefined);
+          
     const json = await request.json()
-    console.log('Received data:', json)  // Debug log
+    console.log('Received data:', json)  
 
-    const todo = await prisma.todo.create({
+    const todo = await memoryStore.todo.create({
       data: {
         text: json.text,
         day: json.day,
@@ -43,10 +39,10 @@ export async function POST(request: Request) {
       }
     })
     
-    console.log('Created todo:', todo)  // Debug log
+    console.log('Created todo:', todo)  
     return NextResponse.json(todo)
   } catch (error) {
-    console.error('Failed to create todo:', error)  // Error log
+    console.error('Failed to create todo:', error) 
     return NextResponse.json(
       { error: 'Failed to create todo' },
       { status: 500 }
@@ -58,7 +54,7 @@ export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = Number(searchParams.get('id'))
   try {
-    await prisma.todo.delete({where: {id}});
+    await memoryStore.todo.delete({where: {id}});
     return NextResponse.json({ message: 'Todo deleted' });
   } catch (error) {
     console.error('Failed to delete todo:', error);
@@ -74,7 +70,7 @@ export async function PUT(request: Request) {
     const json = await request.json();
     const {id, completed} = json;
 
-    const updatedTodo = await prisma.todo.update({
+    const updatedTodo = await memoryStore.todo.update({
       where: { id: Number(id) },
       data: { completed }
     });

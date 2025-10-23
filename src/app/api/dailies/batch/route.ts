@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
-import { prisma } from "@/lib/prisma";
+import { memoryStore, findOrCreateUser } from "@/lib/memory-store";
 import { NextResponse } from 'next/server'
 
 
@@ -18,12 +18,7 @@ export async function POST(request: Request) {
     if (!session || !session.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const user = findOrCreateUser(session.user.email, session.user.name || undefined);
 
     const json = await request.json();
     if (!Array.isArray(json)) {
@@ -32,25 +27,22 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const data = (json as DailyInput[]).map((item) => ({
-      text: item.text,
-      day: item.day,
-      month: item.month,
-      year: item.year,
-      completed: false,
-      userId: user.id
-    }));
-    const createdDailies = await prisma.daily.findMany({
-      where: {
-        OR: data.map(d => ({
-          text: d.text,
-          day: d.day,
-          month: d.month,
-          year: d.year,
-          userId: d.userId
-        }))
-      }
-    });
+    
+    const createdDailies = [];
+    for (const item of json as DailyInput[]) {
+      const daily = await memoryStore.daily.create({
+        data: {
+          text: item.text,
+          day: item.day,
+          month: item.month,
+          year: item.year,
+          completed: false,
+          userId: user.id
+        }
+      });
+      createdDailies.push(daily);
+    }
+    
     return NextResponse.json(createdDailies);
   } catch (error) {
     console.error('Failed to batch create dailies:', error);
