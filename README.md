@@ -7,7 +7,7 @@ A full-stack calendar application for daily task and event planning with persist
 - **Interactive Calendar View**: Month/year navigation with visual task indicators
 - **Task Management**: Add, complete, and delete todos for specific days
 - **Daily Habits Tracking**: Create recurring daily habits that auto-populate each day
-- **User Authentication**: Secure Google OAuth integration
+- **User Authentication**: Secure Google OAuth integration with a persistent database to take your tasks anywhere
 
 ##  Live Demo
 
@@ -16,9 +16,9 @@ A full-stack calendar application for daily task and event planning with persist
 ##  Tech Stack
 
 ### Frontend
-- **Next.js 15** 
+- **React**
+- **Next.js**
 - **TypeScript** 
-- **React Context**
 
 ### Backend
 - **Prisma ORM** 
@@ -65,11 +65,3 @@ A full-stack calendar application for daily task and event planning with persist
    ```bash
    npm run dev
    ```
-
-##  Key Technical Achievements
-
-- **Automated Task Creation**: Implemented logic to automatically generate daily tasks from templates
-- **UI Updates**: Provides immediate feedback while syncing with the database
-- **Type Safety**: Full TypeScript coverage across frontend and backend
-- **Serverless Architecture**: Scalable deployment using Vercel
-- **Database Optimization**: Efficient queries with Prisma ORM and proper indexing
